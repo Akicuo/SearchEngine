@@ -1,16 +1,19 @@
 import mysql.connector
 
 class Connector:
-    def __init__(self, host, user, password):
+    def __init__(self, host, user, password,db):
         self.host = host
         self.user = user
         self.password = password
+        self.db = db
+    def connect(self):
 
-        mydb = mysql.connector.connect(
-  host=self.host,
-  user=self.user,
-  password=self.password
-)
-        return mydb
+            connection = mysql.connector.connect(
+            host=self.host,
+            user=self.user,
+            database=self.db,
+            password=self.password,
+            )
+            return connection
 
     

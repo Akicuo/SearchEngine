@@ -14,7 +14,7 @@ app.secret_key = "2024-BLJ-Projekt"
 
 SAE = SearchAgentEngine(API_Key='LAYLAN-01i2mdabdj3929dk2lem2l2cd1f4762e84d')
 default_pfp = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/768px-Default_pfp.svg.png'
-# connection = sql_model.Connector(host="www.mysql.com", user="root", password="root")
+connection = sql_model.Connector(host="mysql2.webland.ch", user="d041e_seai", password="seaiSEAI$2024", db="d041e_seai").connect()
 
 class UserProfile:
     def __init__(self, is_authenticated=False, isProUser=False, isGuest=False, img_link=default_pfp, username="Guest", id:int=0):
@@ -52,13 +52,6 @@ class UserProfile:
 
 c_user = UserProfile()
 
-"""
-SESSION VAR    |   SESSION TYPE     |       DESCRIBE
-
-----------------|-------------------|-------------------
-user         |   string        |   0/1;USERNAME;img;0/1
-"""
-
 @app.route('/', methods=['GET'])
 def index():
     user = session.get("id")
@@ -85,44 +78,73 @@ def history():
     user = session.get("user")
     return render_template('index.html', user=user)
 
-@app.route('/home', methods=['GET'])
-def home():
-    user = session.get("user")
-    return render_template('index.html', user=user)
+
 
 
 @app.route('/about', methods=['GET'])
 def about():
-    user = session.get("user")
+    user = session.get("id")
+    if user is not None:
+            c_user.is_authenticated=True
+            c_user.username=c_user.FindOutUsername()
+            c_user.img_link=c_user.FindOutProfileIMG()
+            c_user.isProUser=c_user.FindOutSubscriptionType()
     return render_template('index.html', user=user)
 
 @app.route('/contact', methods=['GET'])
 def contact():
-    user = session.get("user")
+    user = session.get("id")
+    if user is not None:
+            c_user.is_authenticated=True
+            c_user.username=c_user.FindOutUsername()
+            c_user.img_link=c_user.FindOutProfileIMG()
+            c_user.isProUser=c_user.FindOutSubscriptionType()
     return render_template('index.html', user=user)
 
 @app.route('/profile', methods=['GET'])
 def profile():
-    user = session.get("user")
+    user = session.get("id")
+    if user is not None:
+            c_user.is_authenticated=True
+            c_user.username=c_user.FindOutUsername()
+            c_user.img_link=c_user.FindOutProfileIMG()
+            c_user.isProUser=c_user.FindOutSubscriptionType()
     return render_template('index.html', user=user)
 
 
 @app.route('/search', methods=['GET'])
 def search():
-    user = session.get("user")
-    seach_results = SAE.Search(request.get_data["query"])
-    return render_template('index.html', apiKey=SAE.KeyIsUsable(), results=seach_results, user=user)
+    user = session.get("id")
+    if user is not None:
+            c_user.is_authenticated=True
+            c_user.username=c_user.FindOutUsername()
+            c_user.img_link=c_user.FindOutProfileIMG()
+            c_user.isProUser=c_user.FindOutSubscriptionType()
+    seach_results = SAE.Search(request.args.get("q"))   
+    return render_template('search.html', results=seach_results, current_user=c_user)
 
 
 
 @app.route('/searches')
 def searches():
+    user = session.get("id")
+    if user is not None:
+            c_user.is_authenticated=True
+            c_user.username=c_user.FindOutUsername()
+            c_user.img_link=c_user.FindOutProfileIMG()
+            c_user.isProUser=c_user.FindOutSubscriptionType()
     self_searches = session.get("self_searched", [])
     return render_template('search_stats.html', self_searches=self_searches)
 
 
 @app.route('/client-api/search', methods=['POST'])
 def clientsearch():
+    user = session.get("id")
+    if user is not None:
+            c_user.is_authenticated=True
+            c_user.username=c_user.FindOutUsername()
+            c_user.img_link=c_user.FindOutProfileIMG()
+            c_user.isProUser=c_user.FindOutSubscriptionType()
     return SAE.Search(request.args.get("q"))
 
 
