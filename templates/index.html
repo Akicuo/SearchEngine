@@ -88,7 +88,7 @@
     </div>
 </nav>
 
-<!-- Corresponding Flask Routes -->
+
 
     <!-- Centered Search Container -->
     <div class="container-fluid d-flex flex-column justify-content-center align-items-center flex-grow-1">
@@ -107,6 +107,7 @@
                     aria-label="Search" 
                     id="searchInput"
                     required
+                    onclick="Searchfor()"
                 >
                 
                 <!-- Search Button -->
@@ -117,24 +118,6 @@
                 >
                     <i class="bi bi-search"></i>
                 </button>
-            </div>
-
-            <!-- Image Upload Container (Hidden by default) -->
-            <div 
-                class="mt-3 image-upload-container rounded d-none" 
-                id="imageUploadContainer"
-            >
-                <input 
-                    type="file" 
-                    id="imageUploadInput" 
-                    accept="image/*" 
-                    class="d-none"
-                >
-                <div id="imageUploadPlaceholder">
-                    <i class="bi bi-cloud-upload fs-1 text-muted"></i>
-                    <p class="mt-2">Drag and drop or click to upload image</p>
-                </div>
-                <img id="imagePreview" class="img-fluid image-preview mt-2 d-none" alt="Image Preview">
             </div>
         </div>
     </div>
@@ -246,14 +229,32 @@ const proUserModal = new bootstrap.Modal(document.getElementById('proUserModal')
 
 
 
-// Search Button Functionality
+
+function Searchfor() {
+    window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+}
+
+searchInput.addEventListener('keypress', function(event) {
+  if (event.key === 'Enter') {
+    const searchTerm = searchInput.value.trim();
+    if (searchTerm) {
+      if (currentSearchType === 'deep' && !isProUser) {
+        alert('Please upgrade to Pro to access Deep Search features.');
+      } else {
+        window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+      }
+    }
+  }
+});
+
+
+// Existing click event listener
 searchButton.addEventListener('click', function() {
   const searchTerm = searchInput.value.trim();
   if (searchTerm) {
     if (currentSearchType === 'deep' && !isProUser) {
       alert('Please upgrade to Pro to access Deep Search features.');
     } else {
-      // Navigate to /search with query parameter
       window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
     }
   }
