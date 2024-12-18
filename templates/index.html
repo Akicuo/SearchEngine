@@ -106,11 +106,9 @@
                     placeholder="Search anything..." 
                     aria-label="Search" 
                     id="searchInput"
-                    required
-                    onclick="Searchfor()"
                 >
                 
-                <!-- Search Button -->
+                <!-- Search Button | For after Winter Holidays: Please fix the search button it doesnt work for some weird reason -->
                 <button 
                     class="btn btn-outline-secondary" 
                     type="button" 
@@ -230,9 +228,7 @@ const proUserModal = new bootstrap.Modal(document.getElementById('proUserModal')
 
 
 
-function Searchfor() {
-    window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
-}
+
 
 searchInput.addEventListener('keypress', function(event) {
   if (event.key === 'Enter') {
