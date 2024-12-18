@@ -114,14 +114,20 @@ def profile():
 
 @app.route('/search', methods=['GET'])
 def search():
+    query = request.args.get("q")
     user = session.get("id")
     if user is not None:
-            c_user.is_authenticated=True
-            c_user.username=c_user.FindOutUsername()
-            c_user.img_link=c_user.FindOutProfileIMG()
-            c_user.isProUser=c_user.FindOutSubscriptionType()
-    seach_results = SAE.Search(request.args.get("q"))   
-    return render_template('search.html', results=seach_results, current_user=c_user)
+        c_user.is_authenticated = True
+        c_user.username = c_user.FindOutUsername()
+        c_user.img_link = c_user.FindOutProfileIMG()
+        c_user.isProUser = c_user.FindOutSubscriptionType()
+    
+    search_results = SAE.Search(query=query)   
+    return render_template('search.html', 
+                           results=search_results, 
+                           current_user=c_user, 
+                           search_query=query,
+                           isProUser=c_user.isProUser)
 
 
 

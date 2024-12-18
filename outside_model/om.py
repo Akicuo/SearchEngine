@@ -27,7 +27,7 @@ class SearchAgentEngine():
     def Search(self, query:str):
         global LAYLAN_KEY
         search = get(f"{URL_SERVICE}search?q={query}&auth={self.api_key}")
-        return search
+        return search.json()  # Parse the JSON response
 
         
         

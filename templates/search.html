@@ -6,7 +6,7 @@
     <title>Search Results</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/central.css') }}">
 </head>
 <body class="d-flex flex-column">
     <!-- Navbar Section -->
@@ -46,39 +46,52 @@
             <div class="col-md-12">
                 <h2>Images</h2>
                 <div class="row">
-                    {% for image in results.images %}
-                    <div class="col-md-4 mb-3">
-                        <div class="card">
-                            <img src="{{ image.imageUrl }}" class="card-img-top" alt="{{ image.title }}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ image.title }}</h5>
-                                <a href="{{ image.link }}" class="btn btn-primary">View More</a>
-                            </div>
-                        </div>
+                    <!-- Images Section -->
+
+    <div class="row">
+        {% if results.images %}
+            {% for image in results.images %}
+            <div class="col-md-4 mb-3 topcard">
+                <div class="card">
+                    <img src="{{ image.imageUrl }}" class="card-img-top" alt="{{ image.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ image.title }}</h5>
+                        <a href="{{ image.link }}" class="btn btn-primary">View More</a>
                     </div>
-                    {% endfor %}
                 </div>
             </div>
+            {% endfor %}
+        {% else %}
+            <p>No images found.</p>
+        {% endif %}
+    </div>
+</div>
 
-            <div class="col-md-12 mt-4">
-                <h2>Organic Results</h2>
-                <ul class="list-group">
-                    {% for result in results.organic %}
-                    <li class="list-group-item">
-                        <h5><a href="{{ result.link }}">{{ result.title }}</a></h5>
-                        <p>{{ result.snippet }}</p>
-                        {% if result.sitelinks %}
-                        <ul>
-                            {% for sitelink in result.sitelinks %}
-                            <li><a href="{{ sitelink.link }}">{{ sitelink.title }}</a></li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                    </li>
+<!-- Organic Results Section -->
+<div class="col-md-12 mt-4">
+    <h2>Organic Results</h2>
+    <ul class="list-group">
+        {% if results.organic %}
+            {% for result in results.organic %}
+            <li class="list-group-item">
+                <h5><a href="{{ result.link }}">{{ result.title }}</a></h5>
+                <p>{{ result.snippet }}</p>
+                {% if result.sitelinks %}
+                <ul>
+                    {% for sitelink in result.sitelinks %}
+                    <li><a href="{{ sitelink.link }}">{{ sitelink.title }}</a></li>
                     {% endfor %}
                 </ul>
-            </div>
+                {% endif %}
+            </li>
+            {% endfor %}
+        {% else %}
+            <p>No organic results found.</p>
+        {% endif %}
+    </ul>
+</div>
 
+<!-- Similar modifications for other sections like peopleAlsoAsk, relatedSearches, topStories -->
             <div class="col-md-12 mt-4">
                 <h2>People Also Ask</h2>
                 <ul class="list-group">
