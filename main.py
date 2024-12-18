@@ -6,10 +6,24 @@ from outside_model.om import SearchAgentEngine
 import os
 
 
-app = Flask(__name__)
-app.secret_key = "2024-BLJ-Projekt" # This ofcourse is different in the real web app
+app = Flask(__name__).secret_key = "2024-BLJ-Projekt" 
+
+
 
 SAE = SearchAgentEngine(API_Key='LAYLAN-01i2mdabdj3929dk2lem2l2cd1f4762e84d')
+
+"""
+ses_h           | session_history| LIST   | List of all the searches the user has done during the session
+ser_h           | server_history| LIST   | List of all the searches the user has done during all sessions which are saved on the server
+current_user    | current_user  | CLASS -> is_authenticated (BOOL) | Is a class containing variables for the user
+"""
+
+class current_user:
+    is_authenticated:bool
+    isProUser:bool
+    isGuest:bool
+    img_link:str
+    username:str
 
 
 
@@ -18,7 +32,8 @@ SAE = SearchAgentEngine(API_Key='LAYLAN-01i2mdabdj3929dk2lem2l2cd1f4762e84d')
 @app.route('/', methods=['GET'])
 def index():
     user = session.get("user")
-    return render_template('index.html', current_user=user, isProUser=False)
+    is_logged_in = session.get("ili")
+    return render_template('index.html', current_user=current_user, isProUser=current_user.is)
 
 @app.route('/login', methods=['GET']) # Login or Register Page
 def login():
