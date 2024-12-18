@@ -6,34 +6,30 @@ from outside_model.om import SearchAgentEngine
 import os
 
 
-app = Flask(__name__).secret_key = "2024-BLJ-Projekt" 
+app = Flask(__name__)
+app.secret_key = "2024-BLJ-Projekt" 
 
 
 
 SAE = SearchAgentEngine(API_Key='LAYLAN-01i2mdabdj3929dk2lem2l2cd1f4762e84d')
+default_pfp = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/768px-Default_pfp.svg.png'
 
-"""
-ses_h           | session_history| LIST   | List of all the searches the user has done during the session
-ser_h           | server_history| LIST   | List of all the searches the user has done during all sessions which are saved on the server
-current_user    | current_user  | CLASS -> is_authenticated (BOOL) | Is a class containing variables for the user
-"""
+class UserProfile:
+    def __init__(self, is_authenticated=False, isProUser=False, isGuest=False, img_link=default_pfp, username=""):
+        self.is_authenticated = is_authenticated
+        self.isProUser = isProUser
+        self.isGuest = isGuest
+        self.img_link = img_link
+        self.username = username
 
-class current_user:
-    is_authenticated:bool
-    isProUser:bool
-    isGuest:bool
-    img_link:str
-    username:str
-
-
-
+c_user = UserProfile()
 
 
 @app.route('/', methods=['GET'])
 def index():
     user = session.get("user")
     is_logged_in = session.get("ili")
-    return render_template('index.html', current_user=current_user, isProUser=current_user.is)
+    return render_template('index.html', current_user=c_user, isProUser=c_user.isProUser)
 
 @app.route('/login', methods=['GET']) # Login or Register Page
 def login():
