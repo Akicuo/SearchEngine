@@ -88,8 +88,6 @@
     </div>
 </nav>
 
-
-
     <!-- Centered Search Container -->
     <div class="container-fluid d-flex flex-column justify-content-center align-items-center flex-grow-1">
         <div class="text-center mb-4">
@@ -108,7 +106,7 @@
                     id="searchInput"
                 >
                 
-                <!-- Search Button | For after Winter Holidays: Please fix the search button it doesnt work for some weird reason -->
+                <!-- Search Button -->
                 <button 
                     class="btn btn-outline-secondary" 
                     type="button" 
@@ -151,7 +149,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="modal fade" id="LoginModal" tabindex="-1">
         <div class="modal-dialog">
@@ -209,83 +206,43 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-const isProUser = {{ current_user.isProUser | lower }};
+
 let currentSearchType = 'web';
 
-// DOM Elements
 const searchInput = document.getElementById('searchInput');
 const searchButton = document.getElementById('searchButton');
-const searchTypeDropdown = document.getElementById('searchTypeDropdown');
-const imageUploadContainer = document.getElementById('imageUploadContainer');
-const imageUploadInput = document.getElementById('imageUploadInput');
-const imageUploadPlaceholder = document.getElementById('imageUploadPlaceholder');
-const imagePreview = document.getElementById('imagePreview');
-const proUserBadge = document.getElementById('proUserBadge');
-const upgradeButton = document.getElementById('upgradeButton');
-const proUserModal = new bootstrap.Modal(document.getElementById('proUserModal'));
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
 
 
-
-
-
-
-
-searchInput.addEventListener('keypress', function(event) {
-  if (event.key === 'Enter') {
-    const searchTerm = searchInput.value.trim();
-    if (searchTerm) {
-      if (currentSearchType === 'deep' && !isProUser) {
-        alert('Please upgrade to Pro to access Deep Search features.');
-      } else {
-        window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
-      }
+    function performSearch() {
+        const searchTerm = searchInput.value.trim();
+        if (searchTerm) {
+            // rediuerect to search
+            window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+        }
     }
-  }
-});
 
 
-// Existing click event listener
-searchButton.addEventListener('click', function() {
-  const searchTerm = searchInput.value.trim();
-  if (searchTerm) {
-    if (currentSearchType === 'deep' && !isProUser) {
-      alert('Please upgrade to Pro to access Deep Search features.');
-    } else {
-      window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+    if (searchButton) {
+        searchButton.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent any default button behavior
+            performSearch();
+        });
     }
-  }
+
+    // Event listener for Enter key in search input
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); 
+                performSearch();
+            }
+        });
+    }
 });
-
-// Image Upload Functionality
-imageUploadPlaceholder.addEventListener('click', function() {
-  imageUploadInput.click();
-});
-
-imageUploadInput.addEventListener('change', function(event) {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      imagePreview.src = e.target.result;
-      imagePreview.classList.remove('d-none');
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-// Upgrade Button Functionality
-upgradeButton.addEventListener('click', function() {
-  proUserModal.show();
-});
-
-// Purchase Pro Button Functionality
-document.getElementById('purchaseProBtn').addEventListener('click', function() {
-  // isProUser = true; // This line has been removed
-  proUserBadge.style.display = 'inline';
-  proUserModal.hide();
-});
-
-
     </script>
 </body>
 </html>
