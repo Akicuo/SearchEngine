@@ -1,0 +1,29 @@
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.search-container {
+    max-width: 700px;
+    width: 100%;
+}
+.form-control {
+    background-color: #ffffff;
+    color: #e0e0e0;
+    border-color: #404040;
+}
+.image-upload-container {
+    border: 2px dashed #404040;
+    padding: 20px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+.image-upload-container:hover {
+    background-color: #2c2c2c;
+}
+.image-preview {
+    max-height: 200px;
+    object-fit: contain;
+}

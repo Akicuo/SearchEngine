@@ -9,19 +9,53 @@ import os
 app = Flask(__name__)
 app.secret_key = "2024-BLJ-Projekt" # This ofcourse is different in the real web app
 
-SAE = SearchAgentEngine(API_Key=os.getenv("Your_LaylanClick_Key", "Empty"))
+SAE = SearchAgentEngine(API_Key='LAYLAN-01i2mdabdj3929dk2lem2l2cd1f4762e84d')
 
 
-@app.route('/login', methods=['GET'])
-def login():
-    user = session.get("user")
-    return render_template('index.html', user=user)
+
 
 
 @app.route('/', methods=['GET'])
 def index():
     user = session.get("user")
-    return render_template('index.html', apiKey=SAE.KeyIsUsable(), user=user)
+    return render_template('index.html', current_user=user, isProUser=False)
+
+@app.route('/login', methods=['GET']) # Login or Register Page
+def login():
+    user = session.get("user")
+    return render_template('index.html', user=user)
+
+@app.route('/register', methods=['GET']) # Login or Register Page
+def register():
+    user = session.get("user")
+    return render_template('index.html', user=user)
+
+@app.route('/history', methods=['GET'])
+def history():
+    user = session.get("user")
+    return render_template('index.html', user=user)
+
+@app.route('/home', methods=['GET'])
+def home():
+    user = session.get("user")
+    return render_template('index.html', user=user)
+
+
+@app.route('/about', methods=['GET'])
+def about():
+    user = session.get("user")
+    return render_template('index.html', user=user)
+
+@app.route('/contact', methods=['GET'])
+def contact():
+    user = session.get("user")
+    return render_template('index.html', user=user)
+
+@app.route('/profile', methods=['GET'])
+def profile():
+    user = session.get("user")
+    return render_template('index.html', user=user)
+
 
 @app.route('/search', methods=['GET'])
 def search():
@@ -35,6 +69,11 @@ def search():
 def searches():
     self_searches = session.get("self_searched", [])
     return render_template('search_stats.html', self_searches=self_searches)
+
+
+@app.route('/client-api/search', methods=['POST'])
+def clientsearch():
+    return SAE.Search(request.args.get("q"))
 
 
 
