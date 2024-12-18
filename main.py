@@ -51,7 +51,8 @@ c_user = UserProfile()
 
 @app.route('/logout')
 def logout():
-    return ""
+    session.clear()
+    return redirect(url_for('index'))
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
