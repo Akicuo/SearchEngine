@@ -14,7 +14,7 @@ app.secret_key = "2024-BLJ-Projekt"
 
 SAE = SearchAgentEngine(API_Key='LAYLAN-01i2mdabdj3929dk2lem2l2cd1f4762e84d')
 default_pfp = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/768px-Default_pfp.svg.png'
-connection = sql_model.Connector()
+# connection = sql_model.Connector(host="www.mysql.com", user="root", password="root")
 
 class UserProfile:
     def __init__(self, is_authenticated=False, isProUser=False, isGuest=False, img_link=default_pfp, username="Guest", id:int=0):
