@@ -65,7 +65,7 @@ def index():
 
 @app.route('/login', methods=['GET']) # Login or Register Page
 def login():
-    user = session.get("user")
+    user = session.get("id")
     return render_template('index.html', user=user)
 
 @app.route('/register', methods=['GET']) # Login or Register Page
@@ -143,15 +143,6 @@ def searches():
     return render_template('search_stats.html', self_searches=self_searches)
 
 
-@app.route('/client-api/search', methods=['POST'])
-def clientsearch():
-    user = session.get("id")
-    if user is not None:
-            c_user.is_authenticated=True
-            c_user.username=c_user.FindOutUsername()
-            c_user.img_link=c_user.FindOutProfileIMG()
-            c_user.isProUser=c_user.FindOutSubscriptionType()
-    return SAE.Search(request.args.get("q"))
 
 
 

@@ -9,6 +9,8 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static',filename='styles/central.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script src="{{ url_for('static', filename='scripts/authentication.js') }}"></script>
 </head>
 <body class="d-flex flex-column">
     <!-- Navbar Section -->
@@ -74,12 +76,12 @@
                         Logout
                     </a>
                 {% else %}
-                    <a href="{{ url_for('login') }}" class="btn btn-outline-success ms-2">
-                        Login
-                    </a>
-                    <a href="{{ url_for('register') }}" class="btn btn-outline-primary ms-2">
-                        Register
-                    </a>
+                <button class="btn btn-outline-success ms-2" id="LoginButton" data-bs-toggle="modal" data-bs-target="#LoginModal">
+                    Login
+                </button>
+                <button class="btn btn-outline-success ms-2" id="RegisterButton" data-bs-toggle="modal" data-bs-target="#RegisterModal">
+                    Register
+                </button>
                 {% endif %}
             </div>
         </div>
@@ -137,6 +139,62 @@
         </div>
     </div>
 
+    <div class="modal fade" id="RegisterModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sign Up</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="signUpForm" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username:</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password:</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password:</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="LoginModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username:</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password:</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Pro User Modal -->
     <div class="modal fade" id="proUserModal" tabindex="-1">
         <div class="modal-dialog">
@@ -151,9 +209,9 @@
                         <h3>Unlock Pro Features</h3>
                         <p>Get access to Deep Search and advanced features!</p>
                         <ul class="list-unstyled">
-                            <li><i class="bi bi-check-circle text-success me-2"></i>Unlimited Deep Searches</li>
-                            <li><i class="bi bi-check-circle text-success me-2"></i>Advanced Image Recognition</li>
-                            <li><i class="bi bi-check-circle text-success me-2"></i>No Ads</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>100 AI Smart Responses / month</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>Image Recognition</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>URL Filtering</li>
                         </ul>
                     </div>
                 </div>
@@ -184,6 +242,8 @@ const imagePreview = document.getElementById('imagePreview');
 const proUserBadge = document.getElementById('proUserBadge');
 const upgradeButton = document.getElementById('upgradeButton');
 const proUserModal = new bootstrap.Modal(document.getElementById('proUserModal'));
+
+
 
 
 // Search Button Functionality
@@ -227,6 +287,8 @@ document.getElementById('purchaseProBtn').addEventListener('click', function() {
   proUserBadge.style.display = 'inline';
   proUserModal.hide();
 });
+
+
     </script>
 </body>
 </html>
