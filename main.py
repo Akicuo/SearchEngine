@@ -25,10 +25,10 @@ default_pfp = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default
 @app.route("/", methods=["GET", "POST"])
 def index():
 
-    session.get("username", "Guest")
-    session.get("is_authenticated", False)
-    session.get("isProUser", "Free")
-    session.get("session_history", [])
+    session.setdefault("username", "Guest")
+    session.setdefault("is_authenticated", False)
+    session.setdefault("isProUser", "Free")
+    session.setdefault("session_history", [])  # Initialize as an empty list if not exists
     if "is_authenticated" not in session:
             session["is_authenticated"] = False
     if "id" not in session:
@@ -103,10 +103,10 @@ def logout():
 
 @app.route("/history", methods=["GET"])
 def history():
-
+    server_saved_searches = []
 
     
-    if sql_model.id_valid(session_id=session.get("id", 0)):
+    if sql_model.id_valid(session_id=session["id"]):
         server_saved_searches = sql_model.get_all_searches(session_id=session["id"])
 
     return render_template("history.html", 
