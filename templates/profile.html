@@ -49,7 +49,7 @@
                             <i class="bi bi-clock-history me-1"></i>Search History
                         </a>
                     </li>
-                    {% if current_user.is_authenticated %}
+                    {% if current_user["is_authenticated"] %}
                     <li class="nav-item">
                         <a class="nav-link active" href="{{ url_for('profile') }}">
                             <i class="bi bi-person me-1"></i>Profile
@@ -60,7 +60,7 @@
                 
                 <!-- Authentication Links (Same as index.html) -->
                 <div class="d-flex align-items-center">
-                    {% if current_user.is_authenticated %}
+                    {% if current_user["is_authenticated"] %}
                         <a href="{{ url_for('logout') }}" class="btn btn-outline-danger ms-2">
                             Logout
                         </a>
@@ -95,14 +95,14 @@
             
             <!-- Right Section -->
             <div class="col-md-8">
-                <h2 class="mb-2">{{ current_user.id }}</h2>
-                <p class="text-muted mb-4">{{ current_user.email or 'email@example.com' }}</p>
+                <h2 class="mb-2">{{ current_user["username"] }}</h2>
+                <p class="text-muted mb-4">{{ current_user["email"] or 'We couldnt find your email' }}</p>
                 
                 <div class="profile-description">
                     <h4>About Me</h4>
                     <p>
-                        {% if current_user.description %}
-                            {{ current_user.description }}
+                        {% if current_user["description"] %}
+                            {{ current_user["description"] }}
                         {% else %}
                             No description provided. Tell us a bit about yourself!
                         {% endif %}
@@ -113,7 +113,7 @@
                 <div class="mt-4">
                     <h4>Subscription Details</h4>
                     <div class="alert {{ 'alert-warning' if current_user.isProUser == 'Free' else 'alert-success' }}">
-                        Current Plan: {{ current_user.isProUser or 'Free' }} User
+                        Current Plan: {{ current_user["isProUser"] or 'Free' }} User
                     </div>
                 </div>
             </div>

@@ -28,65 +28,62 @@ connection = sql_model.Connector(
     db="d041e_seai",
 ).connect()
 
+def FindOutSubscriptionType(id):
+    global connection
+    cursor = connection.cursor()
+    cursor.execute("SELECT subscription FROM users WHERE id = %s", (id,))
+    subscription = cursor.fetchone()
+    if subscription == "free":
+        return "Free"
+    elif subscription == "premium" or subscription == None:
+        return "Premium"
 
-class UserProfile:
-    def __init__(
-        self,
-        is_authenticated=False,
-        isProUser=False,
-        isGuest=False,
-        img_link=default_pfp,
-        username="Guest",
-        id: int = 0,
-    ):
-        self.is_authenticated = is_authenticated
-        self.isProUser = isProUser
-        self.isGuest = isGuest
-        self.img_link = img_link
-        self.username = username
-        self.id = id
+def FindOutUsername(id) -> str:
+    global connection
+    cursor = connection.cursor()
+    cursor.execute("SELECT username FROM users WHERE id = %s", (id,))
+    name = cursor.fetchone()
+    return name if name else None
 
-    def FindOutSubscriptionType(self):
-        global connection
-        cursor = connection.cursor()
-        cursor.execute("SELECT subscription FROM users WHERE id = %s", (self.id,))
-        subscription = cursor.fetchone()
-        if subscription == "free":
-            return "Free"
-        elif subscription == "premium" or subscription == None:
-            return "Premium"
+def FindOutProfileIMG(id) -> str:
+    global connection
+    cursor = connection.cursor()
+    cursor.execute("SELECT img FROM users WHERE id = %s", (id,))
+    pfp = cursor.fetchone()
+    return pfp if pfp else default_pfp
+def FindOutTimeAfterCreation(id):
+    """
+    Find out how long the user has been created for
+    """
+    global connection
+    cursor = connection.cursor()
+    cursor.execute("SELECT creation_date FROM users WHERE id = %s", (id,))
+    created_at = cursor.fetchone()
+    
+    if created_at:
 
-    def FindOutUsername(self) -> str:
-        global connection
-        cursor = connection.cursor()
-        cursor.execute("SELECT username FROM users WHERE id = %s", (self.id,))
-        name = cursor.fetchone()
-        return name if name else None
-
-    def FindOutProfileIMG(self) -> str:
-        global connection
-        cursor = connection.cursor()
-        cursor.execute("SELECT img FROM users WHERE id = %s", (self.id,))
-        pfp = cursor.fetchone()
-        return pfp if pfp else default_pfp
-    def FindOutTimeAfterCreation(self):
-        """
-        Find out how long the user has been created for
-        """
-        global connection
-        cursor = connection.cursor()
-        cursor.execute("SELECT creation_date FROM users WHERE id = %s", (self.id,))
-        created_at = cursor.fetchone()
-        if created_at:
+        if isinstance(created_at, tuple):
             created_at = created_at[0]
-            time_diff = datetime.now() - created_at
-            days = (time_diff.days % 365) % 30
-            return days
-        else:
-            return "Unknown"
+        
+
+        if not isinstance(created_at, datetime):
+            try:
+
+                created_at = datetime.strptime(str(created_at), "%Y-%m-%d %H:%M:%S")
+            except Exception as e:
+                print(f"Error converting creation date: {e}")
+                return "Unknown"
+        
+   
+        time_diff = datetime.now() - created_at
+        days = time_diff.days
+        
+        return days
+    else:
+        return "Unknown"
 
 
-c_user = UserProfile()
+
 
 def id_valid(session_id):   
     global connection
@@ -100,7 +97,7 @@ def id_valid(session_id):
 def add_to_searches(session_id, query) -> None:
     global connection
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO searches (query, user_id, creation_date) VALUES (%s, %s, NOW())", (query, session_id))
+    cursor.execute("INSERT INTO searches (query, user_id, timestamp) VALUES (%s, %s, NOW())", (query, session_id))
     connection.commit()
 
 def get_all_searches(session_id) -> list:
@@ -115,41 +112,34 @@ def get_all_searches(session_id) -> list:
 @app.route("/logout")
 def logout():
     try:
-
-        user_id = session.get('id', 0)
-        print(f"Attempting to log out user with id: {user_id}")
-
-        
-        session.clear()
-
-        # Reset the global user object
-        global c_user
-        c_user = UserProfile()  # Reset to default guest state
-        c_user.is_authenticated = False
-
-   
+        session["is_authenticated"] = False
         flash("You have been logged out successfully.", "success")
-        
-
         return redirect(url_for("index"))
-    
     except Exception as e:
-
         print(f"Error during logout: {e}")
         flash("An error occurred during logout.", "error")
-        return render_template(
-        "index.html", current_user=c_user, isProUser=c_user.isProUser
-    ) # redirect(url_for("index"))
+        return render_template(redirect(url_for("index")))
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    user = session.get("id", 0)
-    if user is not None:
+    user = session.get("id", None) 
+    session.get("username", "Guest")
+    session.get("is_authenticated", False)
+    session.get("isProUser", "Free")
+    if 'session_history' not in session:
+        session['session_history'] = []
+    if "is_authenticated" not in session:
+            session["is_authenticated"] = False
+    if "id" not in session:
+        
+        session["id"] = 0
+        session["is_authenticated"] = False
+    """if user is not None:
             c_user.is_authenticated = True
             c_user.username = c_user.FindOutUsername()  
             c_user.img_link = c_user.FindOutProfileIMG()
-            c_user.isProUser = c_user.FindOutSubscriptionType()
+            c_user.isProUser = c_user.FindOutSubscriptionType()"""
 
     if request.method == "POST":
         if request.form.get("email"):
@@ -161,7 +151,7 @@ def index():
 
             if password != confirm_password:
                 flash("Passwords do not match", "error")
-                return render_template("index.html", current_user=c_user)
+                return render_template("index.html", current_user=session)
 
             try:
                 cursor = connection.cursor()
@@ -174,7 +164,7 @@ def index():
                 return redirect(url_for("index"))
             except Exception as e:
                 flash("Registration failed: " + str(e), "error")
-                return render_template("index.html", current_user=c_user)
+                return render_template("index.html", current_user=session)
         else: # if goes to this else, this means its a login duh
             username = request.form.get("username")
             password = request.form.get("password")
@@ -185,119 +175,81 @@ def index():
                 query = "SELECT * FROM users WHERE username = %s AND password = %s"
                 cursor.execute(query, (username, hashed_password))
 
-                user = cursor.fetchone()
+                fetched_user = cursor.fetchone()
 
-                if user:
-
-                    session["id"] = user["id"]
-                    session["username"] = user["username"]
-
-                    c_user.is_authenticated = True
-                    c_user.id = user["id"]
-                    c_user.username = user["username"]
-                    c_user.img_link = user.get("img", default_pfp)
-                    c_user.isProUser = user["subscription"] == "premium"
+                if fetched_user:
+                    session["id"] = fetched_user["id"]
+                    session["username"] = fetched_user["username"]
+                    session["is_authenticated"] = True
+                    session["isProUser"] = fetched_user["subscription"]
 
                     flash("Login successful!", "success")
                     return redirect(url_for("index"))
                 else:
                     flash("Invalid username or password", "error")
-                    return render_template("index.html", current_user=c_user)
+                    return render_template("index.html", current_user=session)
             except Exception as e:
                 print("Error: " + str(e))
 
     return render_template(
-        "index.html", current_user=c_user, isProUser=c_user.isProUser
-    )
+        "index.html", current_user=session )
 
 
 @app.route("/history", methods=["GET"])
 def history():
-    server_saved_searches = []
-    if 'session_history' not in session:
-        session['session_history'] = []
+
+
+    
     if id_valid(session_id=session.get("id", 0)):
         server_saved_searches = get_all_searches(session_id=session["id"])
 
     return render_template("history.html", 
-                           current_user=c_user, 
+                           current_user=session, 
                            server_saved_searches=server_saved_searches, 
                            session_history=session['session_history'])
 
 
 @app.route("/about", methods=["GET"])
 def about():
-    user = session.get("id")
+    """ser = session.get("id")
     if user is not None:
         c_user.is_authenticated = True
         c_user.username = c_user.FindOutUsername()
         c_user.img_link = c_user.FindOutProfileIMG()
-        c_user.isProUser = c_user.FindOutSubscriptionType()
+        c_user.isProUser = c_user.FindOutSubscriptionType()"""
     return render_template("index.html", user=user)
 
 
 @app.route("/contact", methods=["GET"])
 def contact():
-    user = session.get("id")
-    if user is not None:
-        c_user.is_authenticated = True
-        c_user.username = c_user.FindOutUsername()
-        c_user.img_link = c_user.FindOutProfileIMG()
-        c_user.isProUser = c_user.FindOutSubscriptionType()
     return render_template("index.html", user=user)
 
 
 @app.route("/profile", methods=["GET"])
 def profile():
-    user = session.get("id", 0)
-    if user is not None:
-        c_user.is_authenticated = True
-        c_user.username = c_user.FindOutUsername()
-        c_user.img_link = c_user.FindOutProfileIMG()
-        c_user.isProUser = c_user.FindOutSubscriptionType()
     return render_template("profile.html", 
-                           current_user=c_user, 
-                           wuf=c_user.FindOutTimeAfterCreation())
+                           current_user=session, 
+                           wuf=FindOutTimeAfterCreation(session["id"]))
 
 
 @app.route("/search", methods=["GET"])
 def search():
     query = request.args.get("q")
-    user = session.get("id", 0)
-    if user is not None and id_valid(user):
-        c_user.is_authenticated = True
-        c_user.username = c_user.FindOutUsername()
-        c_user.img_link = c_user.FindOutProfileIMG()
-        c_user.isProUser = c_user.FindOutSubscriptionType()
 
     search_results = SAE.Search(query=query)
 
-    if 'session_history' not in session:
-        session['session_history'] = []
-    if id_valid(user):
+    if id_valid(session["id"]):
         add_to_searches(session["id"], query=query)
+
     session['session_history'].append(query)
 
     return render_template(
         "search.html",
         results=search_results,
-        current_user=c_user,
-        search_query=query,
-        isProUser=c_user.isProUser,
+        current_user=session,
+        search_query=query
     )
 
-
-@app.route("/searches")
-def searches():
-    user = session.get("id")
-    if user is not None:
-        c_user.is_authenticated = True
-        c_user.username = c_user.FindOutUsername()
-        c_user.img_link = c_user.FindOutProfileIMG()
-        c_user.isProUser = c_user.FindOutSubscriptionType()
-    if 'session_history' not in session:
-        session['session_history'] = []
-    return render_template("search_stats.html", self_searches=session['session_history'])
 
 
 if __name__ == "__main__":
