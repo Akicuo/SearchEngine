@@ -81,14 +81,18 @@
     <div class="container d-flex justify-content-center align-items-center flex-grow-1 py-5">
         <div class="profile-card row w-100 mx-auto">
             <!-- Left Section -->
-            <div class="col-md-4 text-center">
-                <img 
-                    src="{{ current_user.img_link or 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/768px-Default_pfp.svg.png' }}" 
-                    alt="Profile Picture" 
-                    class="profile-image mb-4"
-                >
+            <div class="col-md-4 text-center position-relative">
+                <div class="profile-image-container">
+                    <img 
+                        src="{{ current_user.img_link or 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/768px-Default_pfp.svg.png' }}" 
+                        alt="Profile Picture" 
+                        class="profile-image mb-4"
+                    >
+                    <button class="btn btn-sm btn-outline-secondary profile-image-edit-btn" id="editProfilePictureBtn">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </div>
                 <div class="profile-details mb-3">
-
                     <p>You have been with us since: {{ wuf }}</p>
                 </div>
             </div>
