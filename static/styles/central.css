@@ -29,9 +29,33 @@ body {
 }
 
 .topcard {
-    height:600px;
-    font-size: small;
+    width: 250px; 
+    height: 350px;
     object-fit: cover;
+
+}
+
+.topcard .card {
+    height: 100%;
+}
+
+.topcard .card-img-top {
+    width: 100%;
+    height: 200px;
+    object-fit: cover; 
+}
+
+.topcard .card-body {
+    height: calc(100% - 200px); 
+    display: flex;  
+    flex-direction: column;
+}
+.topcard a{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
 }
 
 .search-results-container {
