@@ -71,29 +71,29 @@
                 </div>
             </div>
 
-<!-- Organic Results Section -->
-<div class="col-md-12 mt-4">
-    <!-- <h2>Organic Results</h2> -->
-    <ul class="list-group">
-        {% if results.organic %}
-            {% for result in results.organic %}
-            <li class="list-group-item">
-                <h5><a href="{{ result.link }}">{{ result.title }}</a></h5>
-                <p>{{ result.snippet }}</p>
-                {% if result.sitelinks %}
-                <ul>
-                    {% for sitelink in result.sitelinks %}
-                    <li><a href="{{ sitelink.link }}">{{ sitelink.title }}</a></li>
-                    {% endfor %}
+            <!-- Organic Results Section -->
+            <div class="col-md-12 mt-4">
+                <!-- <h2>Organic Results</h2> -->
+                <ul class="list-group">
+                    {% if results.organic %}
+                        {% for result in results.organic %}
+                        <li class="list-group-item">
+                            <h5><a href="{{ result.link }}">{{ result.title }}</a></h5>
+                            <p>{{ result.snippet }}</p>
+                            {% if result.sitelinks %}
+                            <ul>
+                                {% for sitelink in result.sitelinks %}
+                                <li><a href="{{ sitelink.link }}">{{ sitelink.title }}</a></li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <p>No organic results found.</p>
+                    {% endif %}
                 </ul>
-                {% endif %}
-            </li>
-            {% endfor %}
-        {% else %}
-            <p>No organic results found.</p>
-        {% endif %}
-    </ul>
-</div>
+            </div>
             <div class="row">
                 <div class="col-md-6 mt-4">
                     <h2>People Also Ask</h2>

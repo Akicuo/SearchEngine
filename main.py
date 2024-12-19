@@ -24,15 +24,13 @@ default_pfp = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-
     session.setdefault("username", "Guest")
     session.setdefault("is_authenticated", False)
     session.setdefault("isProUser", "Free")
-    session.setdefault("session_history", [])  # Initialize as an empty list if not exists
+    session.setdefault("session_history", [])
     if "is_authenticated" not in session:
-            session["is_authenticated"] = False
+        session["is_authenticated"] = False
     if "id" not in session:
-        
         session["id"] = 0
         session["is_authenticated"] = False
     print(f"Session history: {session['session_history']}")
@@ -60,7 +58,7 @@ def index():
             except Exception as e:
                 flash("Registration failed: " + str(e), "error")
                 return render_template("index.html", current_user=session)
-        else: # if goes to this else, this means its a login duh
+        else:
             username = request.form.get("username")
             password = request.form.get("password")
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
@@ -86,8 +84,7 @@ def index():
             except Exception as e:
                 print("Error: " + str(e))
 
-    return render_template(
-        "index.html", current_user=session )
+    return render_template("index.html", current_user=session)
 
 @app.route("/logout")
 def logout():
@@ -99,13 +96,11 @@ def logout():
         print(f"Error during logout: {e}")
         flash("An error occurred during logout.", "error")
         return render_template(redirect(url_for("index")))
-    
 
 @app.route("/history", methods=["GET"])
 def history():
     server_saved_searches = []
 
-    
     if sql_model.id_valid(session_id=session["id"]):
         server_saved_searches = sql_model.get_all_searches(session_id=session["id"])
 
@@ -114,16 +109,13 @@ def history():
                            server_saved_searches=server_saved_searches, 
                            session_history=session['session_history'])
 
-
 @app.route("/about", methods=["GET"])
 def about():
     return redirect(url_for("index"))
 
-
 @app.route("/contact", methods=["GET"])
 def contact():
-    return redirect(url_for("index"))
-
+    return render_template('contact.html', current_user=session)
 
 @app.route("/profile", methods=["GET"])
 def profile():
@@ -131,7 +123,6 @@ def profile():
                            current_user=session, 
                            wuf=sql_model.FindOutTimeOfCreation(session["id"]),
                            email=sql_model.FindEmail(session["id"]))
-
 
 @app.route("/search", methods=["GET"])
 def search():
@@ -154,7 +145,6 @@ def search():
 # API SECTION HERE
 @app.route("/api/change-user", methods=["POST"])
 def change_user():
-
     data = request.get_json()
 
     user_id = data.get('id')
@@ -167,7 +157,6 @@ def change_user():
             return jsonify({"success": True, "message": "Username updated successfully."})
         else:
             return jsonify({"success": False, "message": "Failed to update username."}), 400
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=5000)
