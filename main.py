@@ -69,11 +69,26 @@ class UserProfile:
         cursor.execute("SELECT img FROM users WHERE id = %s", (self.id,))
         pfp = cursor.fetchone()
         return pfp if pfp else default_pfp
+    def FindOutTimeAfterCreation(self):
+        """
+        Find out how long the user has been created for
+        """
+        global connection
+        cursor = connection.cursor()
+        cursor.execute("SELECT creation_date FROM users WHERE id = %s", (self.id,))
+        created_at = cursor.fetchone()
+        if created_at:
+            created_at = created_at[0]
+            time_diff = datetime.now() - created_at
+            days = (time_diff.days % 365) % 30
+            return days
+        else:
+            return "Unknown"
 
 
 c_user = UserProfile()
 
-def id_valid(session_id):
+def id_valid(session_id):   
     global connection
     cursor = connection.cursor()
     cursor.execute("SELECT 1 FROM users WHERE id = %s", (session_id,))
@@ -85,7 +100,7 @@ def id_valid(session_id):
 def add_to_searches(session_id, query) -> None:
     global connection
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO searches (query, user_id, timestamp) VALUES (%s, %s, NOW())", (query, session_id))
+    cursor.execute("INSERT INTO searches (query, user_id, creation_date) VALUES (%s, %s, NOW())", (query, session_id))
     connection.commit()
 
 def get_all_searches(session_id) -> list:
@@ -99,18 +114,40 @@ def get_all_searches(session_id) -> list:
 
 @app.route("/logout")
 def logout():
-    session.clear()
-    flash("You have been logged out successfully.", "success")
-    return redirect(url_for("index"))
+    try:
+
+        user_id = session.get('id', 0)
+        print(f"Attempting to log out user with id: {user_id}")
+
+        
+        session.clear()
+
+        # Reset the global user object
+        global c_user
+        c_user = UserProfile()  # Reset to default guest state
+        c_user.is_authenticated = False
+
+   
+        flash("You have been logged out successfully.", "success")
+        
+
+        return redirect(url_for("index"))
+    
+    except Exception as e:
+
+        print(f"Error during logout: {e}")
+        flash("An error occurred during logout.", "error")
+        return render_template(
+        "index.html", current_user=c_user, isProUser=c_user.isProUser
+    ) # redirect(url_for("index"))
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    user = session.get("id", -1)
+    user = session.get("id", 0)
     if user is not None:
-        if id_valid(user):
             c_user.is_authenticated = True
-            c_user.username = c_user.FindOutUsername()
+            c_user.username = c_user.FindOutUsername()  
             c_user.img_link = c_user.FindOutProfileIMG()
             c_user.isProUser = c_user.FindOutSubscriptionType()
 
@@ -138,7 +175,7 @@ def index():
             except Exception as e:
                 flash("Registration failed: " + str(e), "error")
                 return render_template("index.html", current_user=c_user)
-        else:
+        else: # if goes to this else, this means its a login duh
             username = request.form.get("username")
             password = request.form.get("password")
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
@@ -218,13 +255,15 @@ def profile():
         c_user.username = c_user.FindOutUsername()
         c_user.img_link = c_user.FindOutProfileIMG()
         c_user.isProUser = c_user.FindOutSubscriptionType()
-    return render_template("index.html", user=user)
+    return render_template("profile.html", 
+                           current_user=c_user, 
+                           wuf=c_user.FindOutTimeAfterCreation())
 
 
 @app.route("/search", methods=["GET"])
 def search():
     query = request.args.get("q")
-    user = session.get("id", -1)
+    user = session.get("id", 0)
     if user is not None and id_valid(user):
         c_user.is_authenticated = True
         c_user.username = c_user.FindOutUsername()

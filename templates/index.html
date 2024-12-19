@@ -49,7 +49,7 @@
                         <i class="bi bi-clock-history me-1"></i>Search History
                     </a>
                 </li>
-                {% if isProUser %}
+                {% if current_user.is_authenticated and current_user.id != 0 %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('profile') }}">
                         <i class="bi bi-person me-1"></i>Profile
@@ -71,7 +71,7 @@
                 {% endif %}
                 
                 <!-- Authentication Links -->
-                {% if current_user.is_authenticated %}
+                {% if current_user.id != 0 %}
                     <a href="{{ url_for('logout') }}" class="btn btn-outline-danger ms-2">
                         Logout
                     </a>
