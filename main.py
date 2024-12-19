@@ -22,14 +22,9 @@ app.secret_key = "2024-BLJ-Projekt"
 SAE = SearchAgentEngine(API_Key="LAYLAN-01i2mdabdj3929dk2lem2l2cd1f4762e84d")
 default_pfp = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/768px-Default_pfp.svg.png"
 
-
-
-
-
-
 @app.route("/", methods=["GET", "POST"])
 def index():
-    
+
     session.get("username", "Guest")
     session.get("is_authenticated", False)
     session.get("isProUser", "Free")
@@ -122,18 +117,12 @@ def history():
 
 @app.route("/about", methods=["GET"])
 def about():
-    """ser = session.get("id")
-    if user is not None:
-        c_user.is_authenticated = True
-        c_user.username = c_user.FindOutUsername()
-        c_user.img_link = c_user.FindOutProfileIMG()
-        c_user.isProUser = c_user.FindOutSubscriptionType()"""
-    return render_template("index.html", user=user)
+    return redirect(url_for("index"))
 
 
 @app.route("/contact", methods=["GET"])
 def contact():
-    return render_template("index.html", user=user)
+    return redirect(url_for("index"))
 
 
 @app.route("/profile", methods=["GET"])
