@@ -73,6 +73,29 @@ class UserProfile:
 
 c_user = UserProfile()
 
+def id_valid(session_id):
+    global connection
+    cursor = connection.cursor()
+    cursor.execute("SELECT 1 FROM users WHERE id = %s", (session_id,))
+    p = cursor.fetchone()
+    if p is not None:
+        return True
+    else:
+        return False
+def add_to_searches(session_id, query) -> None:
+    global connection
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO searches (query, user_id, timestamp) VALUES (%s, %s, NOW())", (query, session_id))
+    connection.commit()
+
+def get_all_searches(session_id) -> list:
+    global connection
+    cursor = connection.cursor()
+    cursor.execute("SELECT query FROM searches WHERE user_id = %s ORDER BY timestamp DESC", (session_id,))
+    searches = cursor.fetchall()
+    return [search[0] for search in searches]
+
+
 
 @app.route("/logout")
 def logout():
@@ -82,12 +105,13 @@ def logout():
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    user = session.get("id")
+    user = session.get("id", -1)
     if user is not None:
-        c_user.is_authenticated = True
-        c_user.username = c_user.FindOutUsername()
-        c_user.img_link = c_user.FindOutProfileIMG()
-        c_user.isProUser = c_user.FindOutSubscriptionType()
+        if id_valid(user):
+            c_user.is_authenticated = True
+            c_user.username = c_user.FindOutUsername()
+            c_user.img_link = c_user.FindOutProfileIMG()
+            c_user.isProUser = c_user.FindOutSubscriptionType()
 
     if request.method == "POST":
         if request.form.get("email"):
@@ -149,22 +173,18 @@ def index():
     )
 
 
-@app.route("/login", methods=["GET"])  # Login or Register Page
-def login():
-    user = session.get("id")
-    return render_template("index.html", user=user)
-
-
-@app.route("/register", methods=["GET"])  # Login or Register Page
-def register():
-    user = session.get("user")
-    return render_template("index.html", user=user)
-
-
 @app.route("/history", methods=["GET"])
 def history():
-    user = session.get("user")
-    return render_template("index.html", user=user)
+    server_saved_searches = []
+    if 'session_history' not in session:
+        session['session_history'] = []
+    if id_valid(session_id=session.get("id", 0)):
+        server_saved_searches = get_all_searches(session_id=session["id"])
+
+    return render_template("history.html", 
+                           current_user=c_user, 
+                           server_saved_searches=server_saved_searches, 
+                           session_history=session['session_history'])
 
 
 @app.route("/about", methods=["GET"])
@@ -191,7 +211,7 @@ def contact():
 
 @app.route("/profile", methods=["GET"])
 def profile():
-    user = session.get("id")
+    user = session.get("id", 0)
     if user is not None:
         c_user.is_authenticated = True
         c_user.username = c_user.FindOutUsername()
@@ -203,14 +223,21 @@ def profile():
 @app.route("/search", methods=["GET"])
 def search():
     query = request.args.get("q")
-    user = session.get("id")
-    if user is not None:
+    user = session.get("id", -1)
+    if user is not None and id_valid(user):
         c_user.is_authenticated = True
         c_user.username = c_user.FindOutUsername()
         c_user.img_link = c_user.FindOutProfileIMG()
         c_user.isProUser = c_user.FindOutSubscriptionType()
 
     search_results = SAE.Search(query=query)
+
+    if 'session_history' not in session:
+        session['session_history'] = []
+    if id_valid(user):
+        add_to_searches(session["id"], query=query)
+    session['session_history'].append(query)
+
     return render_template(
         "search.html",
         results=search_results,
@@ -228,8 +255,9 @@ def searches():
         c_user.username = c_user.FindOutUsername()
         c_user.img_link = c_user.FindOutProfileIMG()
         c_user.isProUser = c_user.FindOutSubscriptionType()
-    self_searches = session.get("self_searched", [])
-    return render_template("search_stats.html", self_searches=self_searches)
+    if 'session_history' not in session:
+        session['session_history'] = []
+    return render_template("search_stats.html", self_searches=session['session_history'])
 
 
 if __name__ == "__main__":

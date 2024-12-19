@@ -102,3 +102,22 @@ body {
     margin-top: 10px;
 }
 
+.tooltip {
+    position: absolute;
+    bottom: 100%; /* Position above the input */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Animation */
+    pointer-events: none; /* Prevent mouse events */
+}
+
+input:focus + .tooltip,
+input:hover + .tooltip {
+    opacity: 1; /* Show tooltip on focus or hover */
+    transform: translate(-50%, -10px); /* Move tooltip up */
+}
