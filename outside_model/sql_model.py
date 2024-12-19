@@ -34,7 +34,7 @@ def FindOutProfileIMG(id) -> str:
     cursor = connection.cursor()
     cursor.execute("SELECT img FROM users WHERE id = %s", (id,))
     pfp = cursor.fetchone()[0]
-    return pfp if pfp else default_pfp
+    return pfp if pfp else ""
 def FindOutTimeOfCreation(id):
     global connection
     cursor = connection.cursor()
@@ -72,4 +72,13 @@ def FindEmail(id):
     cursor.execute("SELECT email FROM users WHERE id = %s", (id,))
     email = cursor.fetchone()
     return email[0]
-    
+def update_user(user_id, username):
+    global connection
+    cursor = connection.cursor()
+    try:
+        cursor.execute("UPDATE users SET username = %s WHERE id = %s", (username, user_id))
+        connection.commit()
+        return True
+    except mysql.connector.Error as err:
+        print(f"Something went wrong: {err}")
+        return False
