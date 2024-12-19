@@ -37,6 +37,8 @@ body {
 
 .topcard .card {
     height: 100%;
+    background: #2c2c2c;
+    color: white;
 }
 
 .topcard .card-img-top {
@@ -120,4 +122,24 @@ input:focus + .tooltip,
 input:hover + .tooltip {
     opacity: 1; /* Show tooltip on focus or hover */
     transform: translate(-50%, -10px); /* Move tooltip up */
+}
+
+.list-group-item {
+    background-color:#404040;
+}
+
+a{
+    text-decoration: none;
+    color: #fff;
+}
+
+.descriptions-content {
+    color: #ced4da;
+}
+
+.lower-text {
+    color: #ced4da;
+}
+.alwhite {
+    color: #ced4da;
 }

@@ -60,7 +60,7 @@
                                 <img src="{{ image.imageUrl }}" class="card-img-top" alt="{{ image.title }}">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ image.title }}</h5>
-                                    <a href="{{ image.link }}" class="btn btn-primary">View More</a>
+                                    <a href="{{ image.link }}" target="_blank" class="btn btn-primary">View More</a>
                                 </div>
                             </div>
                         </div>
@@ -78,12 +78,12 @@
                     {% if results.organic %}
                         {% for result in results.organic %}
                         <li class="list-group-item">
-                            <h5><a href="{{ result.link }}">{{ result.title }}</a></h5>
-                            <p>{{ result.snippet }}</p>
+                            <h5><a href="{{ result.link }}" target="_blank">{{ result.title }}</a></h5>
+                            <p class="descriptions-content">{{ result.snippet }}</p>
                             {% if result.sitelinks %}
                             <ul>
                                 {% for sitelink in result.sitelinks %}
-                                <li><a href="{{ sitelink.link }}">{{ sitelink.title }}</a></li>
+                                <li><a href="{{ sitelink.link }}" target="_blank">{{ sitelink.title }}</a></li>
                                 {% endfor %}
                             </ul>
                             {% endif %}
@@ -101,8 +101,8 @@
                         {% if results.peopleAlsoAsk %}
                             {% for question in results.peopleAlsoAsk %}
                             <li class="list-group-item">
-                                <h5><a href="{{ question.link }}">{{ question.question }}</a></h5>
-                                <p>{{ question.snippet }}</p>
+                                <h5><a href="{{ question.link }}" target="_blank">{{ question.question }}</a></h5>
+                                <p class="lower-text">{{ question.snippet }}</p>
                             </li>
                             {% endfor %}
                         {% else %}
@@ -116,9 +116,9 @@
                     <ul class="list-group">
                         {% if results.relatedSearches %}
                             {% for search in results.relatedSearches %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <li class="list-group-item d-flex justify-content-between align-items-center lower-text">
                                 {{ search.query }}
-                                <a href="{{ url_for('search', q=search.query) }}" class="badge bg-primary rounded-pill">
+                                <a href="{{ url_for('search', q=search.query) }}" class="badge bg-primary rounded-pill" target="_blank">
                                     <i class="bi bi-search"></i>
                                 </a>
                             </li>
@@ -140,7 +140,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{ story.title }}</h5>
                                 <p class="card-text"><small class="text-muted">{{ story.date }} - {{ story.source }}</small></p>
-                                <a href="{{ story.link }}" class="btn btn-primary">Read More</a>
+                                <a href="{{ story.link }}" target="_blank" class="btn btn-primary">Read More</a>
                             </div>
                         </div>
                     </div>
