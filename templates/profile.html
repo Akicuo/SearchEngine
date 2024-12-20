@@ -29,13 +29,9 @@ Profile
                 <div class="d-flex align-items-center">
                     <h2 class="mb-2 me-3" id="usernameDisplay">{{ current_user["username"] }}</h2>
                 </div>
-                <div id="usernameEditContainer" class="mb-3" style="display: none;">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="usernameEditInput" value="{{ current_user['username'] }}">
-                    </div>
+                <div class="email-class">
+                    <p class="mb-4 profile-email">{{ email }}</p>
                 </div>
-                <p class="text-muted mb-4">{{ email }}</p>
-                
                 
                 <!-- Subscription Details -->
                 <div class="mt-4">

@@ -22,15 +22,16 @@ app.secret_key = "2024-BLJ-Projekt"
 SAE = SearchAgentEngine(API_Key="LAYLAN-01i2mdabdj3929dk2lem2l2cd1f4762e84d")
 default_pfp = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/768px-Default_pfp.svg.png"
 
-session.setdefault("username", "Guest")
-session.setdefault("is_authenticated", False)
-session.setdefault("isProUser", "Free")
-session.setdefault("session_history", [])
-session.setdefault("is_authenticated", False)
-session.setdefault("id", 0)
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    session.setdefault("username", None)
+    session.setdefault("is_authenticated", False)
+    session.setdefault("isProUser", "Free")
+    session.setdefault("session_history", [])
+    session.setdefault("id", 0)
+
     if request.method == "POST":
         if request.form.get("email"):
             username = request.form.get("username")
@@ -116,7 +117,8 @@ def profile():
     return render_template("profile.html", 
                            current_user=session, 
                            wuf=sql_model.FindOutTimeOfCreation(session["id"]),
-                           email=sql_model.FindEmail(session["id"]))
+                           email=sql_model.FindEmail(session["id"]),
+                           current_page="profile", title="Profile")
 
 @app.route("/search", methods=["GET"])
 def search():
