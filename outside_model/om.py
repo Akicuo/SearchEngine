@@ -21,33 +21,4 @@ class SearchAgentEngine():
     def Search(self, query:str):
         global LAYLAN_KEY
         search = get(f"{URL_SERVICE}search-discover?q={query}&auth={self.api_key}")
-        return search.json()  # Parse the JSON response
-    def make_stream_request(self, system_prompt, query):
-        global client
-        model = "meta-llama/llama-3.1-8b-instruct"
-        stream = True 
-        max_tokens = 8192
-
-        chat_completion_res = client.chat.completions.create(
-            model=model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": system_prompt,
-                },
-                {
-                    "role": "user",
-                    "content": query,
-                }
-            ],
-            stream=stream,
-            max_tokens=max_tokens,
-        )
-
-        if stream:
-            for chunk in chat_completion_res:
-                print(chunk.choices[0].delta.content or "")
-        else:
-            print(chat_completion_res.choices[0].message.content)
-                
-        
+        return search.json()  # Parse the JSON response     

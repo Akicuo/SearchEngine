@@ -147,3 +147,13 @@ a{
 .email-class {
     color: white;
 }
+
+.card {
+    background-color: #2c2c2c;
+    color: #ced4da;
+}
+
+#link {
+    color: rgb(0, 119, 255);
+    text-decoration: wavy;
+}

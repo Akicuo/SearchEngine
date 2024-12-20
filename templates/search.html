@@ -8,10 +8,45 @@ Search
 
 
     <div class="container mt-4">
-        <h1 class="text-center">Search Results for "{{ search_query }}"</h1>
+        <h1 id="h1" class="text-center">Search Results for "{{ search_query }}"</h1>
         <div class="row">
             <div class="col-md-12">
-                <!--<h2>Images</h2>-->
+                <!--<h2>AI RESPONSE Section</h2>-->
+                {% if session["isProUser"] %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Seai LLama3.3:8b</h5>
+                        <p id="response" class="Response">{{ response | safe }}</p>
+                    </div>
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const responseElement = document.getElementById('response');
+                        const text = responseElement.textContent;
+                        responseElement.textContent = ''; // Clear the original text
+                
+                        let i = 0;
+                        const speed = 50;
+                
+                        function typeWriter() {
+                            if (i < text.length) {
+                                responseElement.innerHTML += text.charAt(i);
+                                i++;
+                                setTimeout(typeWriter, speed);
+                            }
+                        }
+                
+                        typeWriter();
+                    });
+                </script>
+                {% else %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Seai LLama3.3:8b</h5>
+                        <p class="Response">Please upgrade to premium to view the full response.</p>
+                    </div>
+                </div>
+                {% endif %}
                 <div class="row">
                     <!-- Images Section -->
 

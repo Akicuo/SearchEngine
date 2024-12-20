@@ -7,15 +7,22 @@ from flask import (
     jsonify,
     session,
     flash,
+    Response
 )
 import json
 from datetime import datetime
 from requests import get, post
 from outside_model.om import SearchAgentEngine
+from outside_model.SearchAI import get_novita_ai_response
 import os
 import outside_model.sql_model as sql_model
 import hashlib
+import requests
+import json
+from dotenv import load_dotenv
+import regex as re
 
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = "2024-BLJ-Projekt"
@@ -23,11 +30,20 @@ app.secret_key = "2024-BLJ-Projekt"
 SAE = SearchAgentEngine(API_Key="LAYLAN-01i2mdabdj3929dk2lem2l2cd1f4762e84d")
 default_pfp = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/768px-Default_pfp.svg.png"
 
+key = os.getenv("OPENAI_API_KEY")
+if key is None:
+    print("Please set an OPENAI_API_KEY with a .env file")
+    exit(0)
+
 SYSTEM_PROMPT= """
-You are a professional RAG Information Extracting model, By using the users query and the web response. Formulate a quick short few sentences that contain the answer also contain links if they are relevant to the answers in your answer but in square brackets:
+You are a professional RAG Information Extracting model, By using the users query and the web response. Formulate alot of sentences that contain the answer also contain links if they are relevant to the answers in your answer but in square brackets like '[number][link]':
+Example Response:`
+``` 
+Elon Musk [1][www.example.com] is a very wealthy man due to having a lot of money. He is also the CEO of SpaceX and Tesla [2][www.example.com]. `
+```
 """
 
-USER_PROMPT = """
+USER_PROMPT = """``
 ```
 USER
 [P1]
@@ -38,12 +54,7 @@ WEB RESPONSE
 [p2]
 ```
 """
-def GetAIResponse(user_input):
-    global SYSTEM_PROMPT, USER_PROMPT
 
-    response = SAE.make_stream_request(SYSTEM_PROMPT, USER_PROMPT.replace("[P1]", user_input).replace("[P2]", str(SAE.Search(user_input))))
-    for chunk in response:
-        yield chunk
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -51,7 +62,7 @@ def index():
     global default_pfp
     session.setdefault("username", None)
     session.setdefault("is_authenticated", False)
-    session.setdefault("isProUser", "Free")
+    session.setdefault("isProUser", "Premium")
     session.setdefault("id", 0)
     session.setdefault("img", default_pfp)
 
@@ -107,6 +118,10 @@ def index():
 
     return render_template("index.html", current_user=session, current_page="home", title="Home")
 
+
+
+
+
 @app.route("/logout")
 def logout():
     try:
@@ -144,9 +159,19 @@ def profile():
 
 @app.route("/search", methods=["GET"])
 def search():
+    global key, SYSTEM_PROMPT, USER_PROMPT
+    
     query = request.args.get("q")
-
     search_results = SAE.Search(query=query)
+
+    New_user_Prompt = USER_PROMPT.replace("[P1]", query).replace("[P2]", str(search_results))
+
+    answer=""
+    if session["isProUser"] == "Premium":
+        answer=get_novita_ai_response(key, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)["choices"][0]["message"]["content"]
+        answer = re.sub(r'\[(\d+)\]\[(.*?)\]', r'<b><a target="_blank" id="link" href="\2">\1</a></b>', answer)
+
+    
 
     if sql_model.id_valid(session["id"]):
         sql_model.add_to_searches(session["id"], query=query)
@@ -156,7 +181,7 @@ def search():
         results=search_results,
         current_user=session,
         search_query=query,
-        current_page="search", title="Search"
+        current_page="search", title="Search", response=answer
     )
 
 
