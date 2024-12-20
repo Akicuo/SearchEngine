@@ -16,12 +16,34 @@ import os
 import outside_model.sql_model as sql_model
 import hashlib
 
+
 app = Flask(__name__)
 app.secret_key = "2024-BLJ-Projekt"
 
 SAE = SearchAgentEngine(API_Key="LAYLAN-01i2mdabdj3929dk2lem2l2cd1f4762e84d")
 default_pfp = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/768px-Default_pfp.svg.png"
 
+SYSTEM_PROMPT= """
+You are a professional RAG Information Extracting model, By using the users query and the web response. Formulate a quick short few sentences that contain the answer also contain links if they are relevant to the answers in your answer but in square brackets:
+"""
+
+USER_PROMPT = """
+```
+USER
+[P1]
+```
+->
+```
+WEB RESPONSE
+[p2]
+```
+"""
+def GetAIResponse(user_input):
+    global SYSTEM_PROMPT, USER_PROMPT
+
+    response = SAE.make_stream_request(SYSTEM_PROMPT, USER_PROMPT.replace("[P1]", user_input).replace("[P2]", str(SAE.Search(user_input))))
+    for chunk in response:
+        yield chunk
 
 
 @app.route("/", methods=["GET", "POST"])
