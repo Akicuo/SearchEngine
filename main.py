@@ -102,8 +102,6 @@ def history():
     
     if sql_model.id_valid(session_id=session["id"]):
         server_saved_searches = sql_model.get_all_searches(session_id=session["id"])
-    if "session_history" not in session:
-        session.get("session_history", [])
     return render_template("history.html", 
                            current_user=session, 
                            server_saved_searches=server_saved_searches, 
@@ -130,9 +128,6 @@ def search():
 
     if sql_model.id_valid(session["id"]):
         sql_model.add_to_searches(session["id"], query=query)
-    if "session_history" not in session:
-        session.get("session_history", [])
-    session['session_history'].append(query)
 
     return render_template(
         "search.html",
@@ -143,10 +138,7 @@ def search():
     )
 
 
-@app.route("/api/change-profile", methods=["GET", "POST"])
-def change_user():
-    data = request.get_json()
-    print(data)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=5000)

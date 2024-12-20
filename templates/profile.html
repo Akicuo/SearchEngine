@@ -12,18 +12,7 @@ Profile
         <div class="profile-card row w-100 mx-auto">
             <!-- Left Section -->
             <div class="col-md-4 text-center position-relative">
-                <form action="/api/change-profile" method="post" enctype="multipart/form-data">
-                    <label for="fileToUpload">
-                        <div class="profile-pic profile-image-container">
-                            <img src="{{session['img']}}" alt="Profile Picture" class="img-fluid rounded-circle">
-                            <div class="change-image-overlay">
-                                <span class="glyphicon glyphicon-camera"></span>
-                                <span class="onimage">Change Image</span>
-                            </div>
-                        </div>
-                    </label>
-                    <input type="File" name="fileToUpload" id="fileToUpload">
-                </form>
+
                 <div class="profile-details mb-3">
                     <p>You have been with us since: {{ wuf }}</p>
                 </div>

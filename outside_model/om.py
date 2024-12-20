@@ -2,7 +2,7 @@ from requests import get, post
 from colorama import Fore
 import os
 
-URL_SERVICE = "https://laylan.click/api/"
+URL_SERVICE = "https://laylanclick.replit.app/api/"
 
 class SearchAgentEngine():
     def __init__(self, API_Key):
@@ -26,7 +26,7 @@ class SearchAgentEngine():
 
     def Search(self, query:str):
         global LAYLAN_KEY
-        search = get(f"{URL_SERVICE}search?q={query}&auth={self.api_key}")
+        search = get(f"{URL_SERVICE}search-discover?q={query}&auth={self.api_key}")
         return search.json()  # Parse the JSON response
 
         
