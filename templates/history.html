@@ -6,6 +6,62 @@ Profile
 
 {% block content %}
 
+<!-- Register modal and beneath is login - CNP-->
+<div class="modal fade" id="RegisterModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title">Sign Up</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="signUpForm" method="post">
+                    <div class="mb-3">
+                        <label for="registerUsername" class="form-label">Username:</label>
+                        <input type="text" class="form-control" id="registerUsername" name="username" required autocomplete="username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerPassword" class="form-label">Password:</label>
+                        <input type="password" class="form-control" id="registerPassword" name="password" required autocomplete="new-password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm Password:</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="LoginModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title">Login</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm" method="post">
+                    <div class="mb-3">
+                        <label for="loginUsername" class="form-label">Username:</label>
+                        <input type="text" class="form-control" id="loginUsername" name="username" required autocomplete="username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="loginPassword" class="form-label">Password:</label>
+                        <input type="password" class="form-control" id="loginPassword" name="password" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Search History Container -->
     <div class="container my-5" styles="justify-content: center;">

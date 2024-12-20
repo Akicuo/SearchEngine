@@ -37,7 +37,7 @@ Home
             </div>
         </div>
     </div>
-
+    <!-- Register modal and beneath is login - CNP-->
     <div class="modal fade" id="RegisterModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content bg-dark">
@@ -122,48 +122,9 @@ Home
         </div>
     </div>
 
-    <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <script>
-
-let currentSearchType = 'web';
-
-const searchInput = document.getElementById('searchInput');
-const searchButton = document.getElementById('searchButton');
-
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
-    const searchButton = document.getElementById('searchButton');
-
-
-    function performSearch() {
-        const searchTerm = searchInput.value.trim();
-        if (searchTerm) {
-            // redirect to search
-            window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
-        }
-    }
-
-
-    if (searchButton) {
-        searchButton.addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent any default button behavior
-            performSearch();
-        });
-    }
-
-    // Event listener for Enter key in search input
-    if (searchInput) {
-        searchInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault(); 
-                performSearch();
-            }
-        });
-    }
-});
-    </script>
+    <script src="{{ url_for('static',filename='scripts/search.js') }}"></script>
 </body>
 </html>
 </create_file>
