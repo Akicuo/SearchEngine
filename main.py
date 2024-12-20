@@ -84,7 +84,7 @@ def index():
             except Exception as e:
                 print("Error: " + str(e))
 
-    return render_template("index.html", current_user=session)
+    return render_template("index.html", current_user=session, current_page="home", title="Home")
 
 @app.route("/logout")
 def logout():

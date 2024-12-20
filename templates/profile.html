@@ -88,9 +88,6 @@
                         alt="Profile Picture" 
                         class="profile-image mb-4"
                     >
-                    <button class="btn btn-sm btn-outline-secondary profile-image-edit-btn" id="editProfilePictureBtn">
-                        <i class="bi bi-pencil"></i>
-                    </button>
                 </div>
                 <div class="profile-details mb-3">
                     <p>You have been with us since: {{ wuf }}</p>
@@ -101,14 +98,10 @@
             <div class="col-md-8">
                 <div class="d-flex align-items-center">
                     <h2 class="mb-2 me-3" id="usernameDisplay">{{ current_user["username"] }}</h2>
-                    <button class="btn btn-sm btn-outline-secondary" id="editUsernameBtn">
-                        <i class="bi bi-pencil"></i> Edit
-                    </button>
                 </div>
                 <div id="usernameEditContainer" class="mb-3" style="display: none;">
                     <div class="input-group">
                         <input type="text" class="form-control" id="usernameEditInput" value="{{ current_user['username'] }}">
-                        <button class="btn btn-primary" id="usernameEditDoneBtn">Done</button>
                     </div>
                 </div>
                 <p class="text-muted mb-4">{{ email }}</p>
