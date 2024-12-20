@@ -22,18 +22,15 @@ app.secret_key = "2024-BLJ-Projekt"
 SAE = SearchAgentEngine(API_Key="LAYLAN-01i2mdabdj3929dk2lem2l2cd1f4762e84d")
 default_pfp = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/768px-Default_pfp.svg.png"
 
+session.setdefault("username", "Guest")
+session.setdefault("is_authenticated", False)
+session.setdefault("isProUser", "Free")
+session.setdefault("session_history", [])
+session.setdefault("is_authenticated", False)
+session.setdefault("id", 0)
+
 @app.route("/", methods=["GET", "POST"])
 def index():
-    session.setdefault("username", "Guest")
-    session.setdefault("is_authenticated", False)
-    session.setdefault("isProUser", "Free")
-    session.setdefault("session_history", [])
-    if "is_authenticated" not in session:
-        session["is_authenticated"] = False
-    if "id" not in session:
-        session["id"] = 0
-        session["is_authenticated"] = False
-    print(f"Session history: {session['session_history']}")
     if request.method == "POST":
         if request.form.get("email"):
             username = request.form.get("username")
@@ -107,15 +104,12 @@ def history():
     return render_template("history.html", 
                            current_user=session, 
                            server_saved_searches=server_saved_searches, 
-                           session_history=session['session_history'])
+                           session_history=session['session_history'],
+                           current_page="history", title="History")
 
 @app.route("/about", methods=["GET"])
 def about():
     return redirect(url_for("index"))
-
-@app.route("/contact", methods=["GET"])
-def contact():
-    return render_template('contact.html', current_user=session)
 
 @app.route("/profile", methods=["GET"])
 def profile():
@@ -139,7 +133,8 @@ def search():
         "search.html",
         results=search_results,
         current_user=session,
-        search_query=query
+        search_query=query,
+        current_page="search", title="Search"
     )
 
 """@app.route("/api/change-user", methods=["POST"])
