@@ -26,11 +26,12 @@ default_pfp = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    global default_pfp
     session.setdefault("username", None)
     session.setdefault("is_authenticated", False)
     session.setdefault("isProUser", "Free")
-    session.setdefault("session_history", [])
     session.setdefault("id", 0)
+    session.setdefault("img", default_pfp)
 
     if request.method == "POST":
         if request.form.get("email"):
@@ -98,10 +99,11 @@ def logout():
 @app.route("/history", methods=["GET"])
 def history():
     server_saved_searches = []
-
+    
     if sql_model.id_valid(session_id=session["id"]):
         server_saved_searches = sql_model.get_all_searches(session_id=session["id"])
-
+    if "session_history" not in session:
+        session.get("session_history", [])
     return render_template("history.html", 
                            current_user=session, 
                            server_saved_searches=server_saved_searches, 
@@ -128,7 +130,8 @@ def search():
 
     if sql_model.id_valid(session["id"]):
         sql_model.add_to_searches(session["id"], query=query)
-
+    if "session_history" not in session:
+        session.get("session_history", [])
     session['session_history'].append(query)
 
     return render_template(
@@ -139,19 +142,11 @@ def search():
         current_page="search", title="Search"
     )
 
-"""@app.route("/api/change-user", methods=["POST"])
+
+@app.route("/api/change-profile", methods=["GET", "POST"])
 def change_user():
     data = request.get_json()
-    user_rn = data.get('current_username')
-    username = data.get('username')
-
-    if data:
-        attempt = sql_model.update_user(current_username=user_rn, username=username)
-        if attempt:
-            session["username"] = username  # Update session username
-            return jsonify({"success": True, "message": "Username updated successfully."})
-        else:
-            return jsonify({"success": False, "message": "Failed to update username."}), 400"""
+    print(data)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=5000)
