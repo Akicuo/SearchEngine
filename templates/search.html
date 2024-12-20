@@ -8,13 +8,42 @@ Search
 
 
     <div class="container mt-4">
-        <h1 id="h1" class="text-center">Search Results for "{{ search_query }}"</h1>
+        <!-- Centered Search Container -->
+        <div class="text-center mb-4">
+            <h1 class="display-4">Search</h1>
+            <p class="lead">Discover, Search, Explore</p>
+        </div>
+        
+        <div class="search-container position-relative">
+            <div class="input-group justify-content-center">
+                <div class="col-md-8"> <!-- Adjust the column size here -->
+                    <input 
+                        type="search" 
+                        class="form-control form-control-lg" 
+                        placeholder="Search anything..." 
+                        aria-label="Search" 
+                        id="searchInput"
+                        value="{{ search_query }}"
+                    >
+                </div>
+                <span class="tooltip">Powered by Laylan.click and Serper.dev</span>
+                
+                <!-- Search Button -->
+                <button 
+                    class="btn btn-outline-secondary" 
+                    type="button" 
+                    id="searchButton"
+                >
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <!--<h2>AI RESPONSE Section</h2>-->
                 {% if session["isProUser"] %}
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Seai qwen/qwen-2.5-72b-instruct
                         </h5>
                         <p id="response" class="Response">{{ response | safe }}</p>
@@ -22,65 +51,74 @@ Search
                 </div>
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
-    const responseElement = document.getElementById('response');
-    const text = responseElement.innerHTML; // Use innerHTML to preserve HTML
-    responseElement.innerHTML = ''; // Clear the original content
+                    const responseElement = document.getElementById('response');
+                    const username = encodeURIComponent("{{ session['username'] }}");
+                    const password = encodeURIComponent("{{ session['uuid'] }}");
+                    const query = encodeURIComponent("{{ search_query }}");
 
-    let i = 0;
-    const speed = 5;
+                    async function fetchResponse() {
+                        const response = await fetch(`/get-response?username=${username}&arg_uuid=${password}&query=${query}`, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'text/event-stream',
+                            },
+                        });
 
-    function typeWriter() {
-        if (i < text.length) {
-            // Check if the current character is the start of an HTML tag
-            if (text.charAt(i) === '<') {
-                // Find the complete HTML tag or nested tags
-                let tagEndIndex = text.indexOf('>', i);
-                let depth = 1;
-                let j = tagEndIndex + 1;
+                        const reader = response.body.getReader();
+                        const decoder = new TextDecoder();
+                        let done = false;
+                        let fullText = "";
 
-                // Handle nested tags
-                while (depth > 0 && j < text.length) {
-                    if (text.substr(j, 2) === '</') {
-                        depth--;
-                    } else if (text.charAt(j) === '<') {
-                        depth++;
+                        while (!done) {
+                            const { value, done: doneReading } = await reader.read();
+                            done = doneReading;
+
+                            if (value) {
+                                const text = decoder.decode(value, { stream: true });
+                                fullText += text; 
+                            }
+                        }
+
+                        console.log("Raw API Response:", fullText); 
+                        
+                        typeWriter(fullText);
                     }
-                    
-                    if (depth === 0) {
-                        tagEndIndex = text.indexOf('>', j);
-                        break;
+
+                    function typeWriter(text) {
+                        let i = 0;
+                        const speed = 1; 
+
+                        
+                        const cleanText = text.replace(/[^a-zA-Z0-9.,!?;:'" \n]/g, ' ').replace(/\s+/g, ' ').trim(); // Clean and normalize spaces
+
+                        console.log("Cleaned Text:", cleanText); // Debugging output
+
+                        function type() {
+                            if (i < cleanText.length) {
+                                responseElement.innerHTML += cleanText.charAt(i);
+                                i++;
+                                setTimeout(type, speed);
+                            }
+                        }
+
+                        type();
                     }
-                    j++;
-                }
 
-                const completeTag = text.substring(i, tagEndIndex + 1);
-                responseElement.innerHTML += completeTag;
-                i = tagEndIndex + 1;
-            } else {
-                // Regular character typing
-                responseElement.innerHTML += text.charAt(i);
-                i++;
-            }
-            
-            setTimeout(typeWriter, speed);
-        }
-    }
-
-    typeWriter();
-});
+                    fetchResponse();
+                });
                 </script>
                 {% else %}
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Seai LLama3.3:8b</h5>
-                        <p class="Response">Please upgrade to premium to view the full response.</p>
+                <div class="card bg-warning">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-dark">Upgrade for Full Access</h5>
+                        <p id="response" class="Response text-dark">Please upgrade to premium to view the full AI response.</p>
                     </div>
                 </div>
                 {% endif %}
                 <div class="row">
                     <!-- Images Section -->
 
-                <div class="row">
+                <div class="row  justify-content-center">
                     {% if results.images %}
                         {% for image in results.images %}
                         <div class="col-md-4 mb-3 topcard">
@@ -182,6 +220,7 @@ Search
         <p>&copy; 2024 Seai. All rights reserved.</p>
     </footer>
 
+    <script src="{{ url_for('static',filename='scripts/search.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

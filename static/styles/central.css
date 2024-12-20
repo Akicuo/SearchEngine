@@ -151,9 +151,14 @@ a{
 .card {
     background-color: #2c2c2c;
     color: #ced4da;
+    margin-top: 25px;
+    margin-bottom: 25px;
 }
 
 #link {
     color: rgb(0, 119, 255);
     text-decoration: wavy;
+}
+.centerIt {
+    justify-content: center;
 }

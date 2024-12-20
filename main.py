@@ -9,7 +9,7 @@ from flask import (
     flash,
     Response
 )
-import json
+import json, time
 from datetime import datetime
 from requests import get, post
 from outside_model.om import SearchAgentEngine
@@ -21,7 +21,7 @@ import requests
 import json
 from dotenv import load_dotenv
 import regex as re
-
+import uuid
 load_dotenv()
 
 app = Flask(__name__)
@@ -57,7 +57,8 @@ WEB RESPONSE
 [P2] Your task is to synthesize the information from the user's query and the web response into a coherent and informative answer. Ensure that your response is clear and provides value to the user.
 ```
 """
-
+def get_random_uuid() -> str:
+    return str(uuid.uuid4())
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -65,8 +66,9 @@ def index():
     global default_pfp
     session.setdefault("username", None)
     session.setdefault("is_authenticated", False)
-    session.setdefault("isProUser", "Premium")
+    session.setdefault("isProUser", "Free")
     session.setdefault("id", 0)
+    session.setdefault("id", "")
     session.setdefault("img", default_pfp)
 
     if request.method == "POST":
@@ -84,9 +86,9 @@ def index():
             try:
                 cursor = sql_model.connection.cursor()
                 query = (
-                    "INSERT INTO users (username, email, password) VALUES (%s, %s, %s)"
+                    "INSERT INTO users (username, email, password, uuid) VALUES (%s, %s, %s, %s)"
                 )
-                cursor.execute(query, (username, email, hashed_password))
+                cursor.execute(query, (username, email, hashed_password, get_random_uuid()))
                 sql_model.connection.commit()
                 flash("Registration successful! You can now log in.", "success")
                 return redirect(url_for("index"))
@@ -110,6 +112,7 @@ def index():
                     session["username"] = fetched_user["username"]
                     session["is_authenticated"] = True
                     session["isProUser"] = fetched_user["subscription"]
+                    session["uuid"] = fetched_user["uuid"]
 
                     flash("Login successful!", "success")
                     return redirect(url_for("index"))
@@ -120,6 +123,50 @@ def index():
                 print("Error: " + str(e))
 
     return render_template("index.html", current_user=session, current_page="home", title="Home")
+
+
+
+
+@app.route("/get-response", methods=["GET"])
+def get_response():
+    username = request.args.get("username")
+    arg_uuid = request.args.get("arg_uuid")
+    query = request.args.get("query")
+
+    if username is None or arg_uuid is None or query is None:
+        return jsonify({"error": "Missing Parameters"}), 400
+
+    # Validate user credentials
+    cursor = sql_model.connection.cursor(dictionary=True)
+    query_check = "SELECT * FROM users WHERE username = %s AND uuid = %s"
+    cursor.execute(query_check, (username, arg_uuid))
+    fetched_user = cursor.fetchone()
+
+    if not fetched_user:
+        return jsonify({"error": "Invalid username or arg_uuid"}), 401
+
+    if session["isProUser"] != "Premium":
+        return jsonify({"error": "User  is not premium"}), 403
+
+    # Start streaming response
+    def generate_response():
+        search_results = SAE.Search(query=query)
+        
+        
+        process_wr:str=""
+        for result in search_results.get("organic"):
+            process_wr+= f"Title: {result['title']}\nUrl: {result['link']}\nSnippet:{result['snippet']}\n\n"
+        New_user_Prompt = USER_PROMPT.replace("[P1]", query).replace("[P2]", process_wr)
+        print(New_user_Prompt)
+        # Get AI response
+        answer = get_novita_ai_response(key, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)["choices"][0]["message"]["content"]
+
+        # Yield the response in chunks
+        for chunk in answer.splitlines():
+            yield f"{chunk}\n"  # Send each line as a separate chunk
+            time.sleep(0.1)  # Optional: add a delay for typewriter effect
+
+    return Response(generate_response(), mimetype='text/plain')
 
 
 
@@ -167,14 +214,7 @@ def search():
     query = request.args.get("q")
     search_results = SAE.Search(query=query)
 
-    New_user_Prompt = USER_PROMPT.replace("[P1]", query).replace("[P2]", str(search_results))
-    print(New_user_Prompt)
-
-    answer=""
-    if session["isProUser"] == "Premium":
-        answer=get_novita_ai_response(key, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)["choices"][0]["message"]["content"]
-        answer = re.sub(r'\[(\d+)\]\[(.*?)\]', r'<b><a target="_blank" id="link" href="\2">\1</a></b>', answer)
-        answer = answer.replace("**", "<b>")
+    
 
     
 
@@ -186,7 +226,7 @@ def search():
         results=search_results,
         current_user=session,
         search_query=query,
-        current_page="search", title="Search", response=answer
+        current_page="search", title="Search"
     )
 
 
