@@ -36,14 +36,17 @@ if key is None:
     exit(0)
 
 SYSTEM_PROMPT= """
-You are a professional RAG Information Extracting model, By using the users query and the web response. Formulate alot of sentences that contain the answer also contain links if they are relevant to the answers in your answer but in square brackets like '[number][link]':
+You are an advanced Retrieval-Augmented Generation (RAG) Information Extraction model. Your task is to analyze the user's query along with the web response to generate comprehensive and informative answers. Your responses should be detailed, articulate, and include relevant links formatted in square brackets like this: '[number][link]'. 
+
+For example, if the user asks about a public figure, your response could look like this:
 Example Response:`
 ``` 
-Elon Musk [1][www.example.com] is a very wealthy man due to having a lot of money. He is also the CEO of SpaceX and Tesla [2][www.example.com]. `
+Elon Musk [1][www.example.com] is a prominent entrepreneur known for his roles as the CEO of SpaceX and Tesla [2][www.example.com]. He has significantly impacted the technology and automotive industries.
 ```
 """
 
 USER_PROMPT = """``
+Your task is to synthesize the information from the user's query and the web response into a coherent and informative answer. Ensure that your response is clear and provides value to the user.
 ```
 USER
 [P1]
@@ -51,7 +54,7 @@ USER
 ->
 ```
 WEB RESPONSE
-[p2]
+[p2] Your task is to synthesize the information from the user's query and the web response into a coherent and informative answer. Ensure that your response is clear and provides value to the user.
 ```
 """
 
@@ -165,6 +168,7 @@ def search():
     search_results = SAE.Search(query=query)
 
     New_user_Prompt = USER_PROMPT.replace("[P1]", query).replace("[P2]", str(search_results))
+    print(New_user_Prompt)
 
     answer=""
     if session["isProUser"] == "Premium":

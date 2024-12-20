@@ -7,7 +7,7 @@ def get_novita_ai_response(api_key, query, system_prompt="You are a helpful assi
         "Authorization": f"Bearer {api_key}"
     }
     data = {
-        "model": "meta-llama/llama-3.1-8b-instruct",
+        "model": "qwen/qwen-2.5-72b-instruct",
         "messages": [
             {
                 "role": "system",
