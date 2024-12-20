@@ -72,13 +72,16 @@ def FindEmail(id):
     cursor.execute("SELECT email FROM users WHERE id = %s", (id,))
     email = cursor.fetchone()
     return email[0]
-def update_user(user_id, username):
+"""def update_user(current_username, username):
+
+    # Friday 07:45:00: Changed from using ID of the user to the Username due to issues.
+
     global connection
     cursor = connection.cursor()
     try:
-        cursor.execute("UPDATE users SET username = %s WHERE id = %s", (username, user_id))
+        cursor.execute("UPDATE users SET username = %s WHERE username = %s", (username, current_username))
         connection.commit()
         return True
     except mysql.connector.Error as err:
         print(f"Something went wrong: {err}")
-        return False
+        return False"""

@@ -142,21 +142,19 @@ def search():
         search_query=query
     )
 
-# API SECTION HERE
-@app.route("/api/change-user", methods=["POST"])
+"""@app.route("/api/change-user", methods=["POST"])
 def change_user():
     data = request.get_json()
-
-    user_id = data.get('id')
+    user_rn = data.get('current_username')
     username = data.get('username')
 
     if data:
-        attempt = sql_model.update_user(user_id, username)
+        attempt = sql_model.update_user(current_username=user_rn, username=username)
         if attempt:
-            session["username"] = username
+            session["username"] = username  # Update session username
             return jsonify({"success": True, "message": "Username updated successfully."})
         else:
-            return jsonify({"success": False, "message": "Failed to update username."}), 400
+            return jsonify({"success": False, "message": "Failed to update username."}), 400"""
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=5000)

@@ -16,14 +16,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const newUsername = usernameEditInput.value.trim();
 
         if (newUsername) {
-            // Send POST request to change username
+            // Send POST req
             fetch('/api/change-user', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    id: "{{ session['id'] }}",
+                    current_username: "{{ session['username'] }}",
                     username: newUsername
                 })
             })
@@ -33,12 +33,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Update username display
                     usernameDisplay.textContent = newUsername;
                     
-                    // Revert to original view
+                    // back to original view
                     usernameDisplay.style.display = 'block';
                     editUsernameBtn.style.display = 'block';
                     usernameEditContainer.style.display = 'none';
                 } else {
-                    // Handle error (show message to user)
+                    // incase of errors ->
                     alert(data.message || 'Failed to update username');
                 }
             })
