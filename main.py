@@ -36,7 +36,7 @@ if key is None:
     exit(0)
 
 SYSTEM_PROMPT= """
-You are an advanced Retrieval-Augmented Generation (RAG) Information Extraction model. Your task is to analyze the user's query along with the web response to generate comprehensive and informative answers. Your responses should be detailed, articulate, and include relevant links formatted in square brackets like this: '[number][link]'. 
+You are an advanced Retrieval-Augmented Generation (RAG) Information Extraction model. Your task is to analyze the user's query along with the web response to generate comprehensive and informative answers. Your responses should be detailed, articulate, and include relevant links formatted in square brackets like this: '[number][link]'. Only give Answers that are stated in the web response and do not hallucinate
 
 For example, if the user asks about a public figure, your response could look like this:
 Example Response:`
@@ -46,7 +46,7 @@ Elon Musk [1][www.example.com] is a prominent entrepreneur known for his roles a
 """
 
 USER_PROMPT = """``
-Your task is to synthesize the information from the user's query and the web response into a coherent and informative answer. Ensure that your response is clear and provides value to the user.
+Your task is to synthesize the information from the user's query and the web response into a coherent and informative answer. Ensure that your response is clear and provides value to the user Be sure to include those includes like [1][https://www.example.com] after every or 2 sentences.
 ```
 USER
 [P1]
@@ -54,7 +54,7 @@ USER
 ->
 ```
 WEB RESPONSE
-[p2] Your task is to synthesize the information from the user's query and the web response into a coherent and informative answer. Ensure that your response is clear and provides value to the user.
+[P2] Your task is to synthesize the information from the user's query and the web response into a coherent and informative answer. Ensure that your response is clear and provides value to the user.
 ```
 """
 
@@ -174,6 +174,7 @@ def search():
     if session["isProUser"] == "Premium":
         answer=get_novita_ai_response(key, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)["choices"][0]["message"]["content"]
         answer = re.sub(r'\[(\d+)\]\[(.*?)\]', r'<b><a target="_blank" id="link" href="\2">\1</a></b>', answer)
+        answer = answer.replace("**", "<b>")
 
     
 
