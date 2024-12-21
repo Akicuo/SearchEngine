@@ -194,8 +194,8 @@ def history():
                            server_saved_searches=server_saved_searches,
                            current_page="history", title="History")
 
-@app.route("/about", methods=["GET"])
-def about():
+@app.route("/threads", methods=["GET"])
+def threads():
     return redirect(url_for("index"))
 
 @app.route("/profile", methods=["GET"])
