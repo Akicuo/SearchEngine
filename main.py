@@ -158,13 +158,13 @@ def get_response():
             process_wr+= f"Title: {result['title']}\nUrl: {result['link']}\nSnippet:{result['snippet']}\n\n"
         New_user_Prompt = USER_PROMPT.replace("[P1]", query).replace("[P2]", process_wr)
         print(New_user_Prompt)
-        # Get AI response
+
         answer = get_novita_ai_response(key, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)["choices"][0]["message"]["content"]
 
-        # Yield the response in chunks
+
         for chunk in answer.splitlines():
-            yield f"{chunk}\n"  # Send each line as a separate chunk
-            time.sleep(0.1)  # Optional: add a delay for typewriter effect
+            yield f"{chunk}\n"  
+            time.sleep(0.1) 
 
     return Response(generate_response(), mimetype='text/plain')
 

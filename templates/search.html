@@ -7,9 +7,8 @@ Search
 {% block content %}
 
 
-    <div class="container mt-4">
         <!-- Centered Search Container -->
-        <div class="text-center mb-4">
+        <div class="container-fluid d-flex flex-column justify-content-center align-items-center flex-grow-1">
             <h1 class="display-4">Search</h1>
             <p class="lead">Discover, Search, Explore</p>
         </div>
@@ -91,7 +90,7 @@ async function fetchResponse() {
 
     while (!done) {
         const { value, done: doneReading } = await reader.read();
-        done = doneReading;
+        done = doneReading;S
 
         if (value) {
             const text = decoder.decode(value, { stream: true });

@@ -36,8 +36,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if current_page == 'about' %}active{% endif %}" href="{{ url_for('about') }}">
-                            <i class="bi bi-info-circle me-1"></i>About Us
+                        <a class="nav-link {% if current_page == 'threads' %}active{% endif %}" href="{{ url_for('threads') }}">
+                            <i class="bi bi-info-circle me-1"></i>Threads
                         </a>
                     </li>
                     <li class="nav-item">
@@ -72,7 +72,7 @@
             </div>
         </div>
     </nav>
-
+    <br><br><br><br><br><br><br><br><br><br><br><br><br>
     <!-- Main Content -->
     <main class="flex-grow-1">
         {% block content %}
