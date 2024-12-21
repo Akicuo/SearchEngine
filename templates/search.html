@@ -76,7 +76,7 @@ async function fetchResponse() {
     // Start loading animation
     const loadingInterval = createLoadingAnimation(responseElement);
 
-    const response = await fetch(`/get-response?username=${username}&arg_uuid=${password}&query=${query}`, {
+    const response = await fetch(`/api/response?username=${username}&arg_uuid=${password}&query=${query}`, {
         method: 'GET',
         headers: {
             'Accept': 'text/event-stream',

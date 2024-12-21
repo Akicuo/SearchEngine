@@ -124,54 +124,6 @@ def index():
 
     return render_template("index.html", current_user=session, current_page="home", title="Home")
 
-
-
-
-@app.route("/get-response", methods=["GET"])
-def get_response():
-    username = request.args.get("username")
-    arg_uuid = request.args.get("arg_uuid")
-    query = request.args.get("query")
-
-    if username is None or arg_uuid is None or query is None:
-        return jsonify({"error": "Missing Parameters"}), 400
-
-    # Validate user credentials
-    cursor = sql_model.connection.cursor(dictionary=True)
-    query_check = "SELECT * FROM users WHERE username = %s AND uuid = %s"
-    cursor.execute(query_check, (username, arg_uuid))
-    fetched_user = cursor.fetchone()
-
-    if not fetched_user:
-        return jsonify({"error": "Invalid username or arg_uuid"}), 401
-
-    if session["isProUser"] != "Premium":
-        return jsonify({"error": "User  is not premium"}), 403
-
-    # Start streaming response
-    def generate_response():
-        search_results = SAE.Search(query=query)
-        
-        
-        process_wr:str=""
-        for result in search_results.get("organic"):
-            process_wr+= f"Title: {result['title']}\nUrl: {result['link']}\nSnippet:{result['snippet']}\n\n"
-        New_user_Prompt = USER_PROMPT.replace("[P1]", query).replace("[P2]", process_wr)
-        print(New_user_Prompt)
-
-        answer = get_novita_ai_response(key, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)["choices"][0]["message"]["content"]
-
-
-        for chunk in answer.splitlines():
-            yield f"{chunk}\n"  
-            time.sleep(0.1) 
-
-    return Response(generate_response(), mimetype='text/plain')
-
-
-
-
-
 @app.route("/logout")
 def logout():
     try:
@@ -229,6 +181,63 @@ def search():
     )
 
 
+# Backend API starts here
+
+@app.route("/api/response", methods=["GET"])
+def api_response():
+    username = request.args.get("username")
+    arg_uuid = request.args.get("arg_uuid")
+    query = request.args.get("query")
+
+    if username is None or arg_uuid is None or query is None:
+        return jsonify({"error": "Missing Parameters"}), 400
+
+    # Validate user credentials
+    cursor = sql_model.connection.cursor(dictionary=True)
+    query_check = "SELECT * FROM users WHERE username = %s AND uuid = %s"
+    cursor.execute(query_check, (username, arg_uuid))
+    fetched_user = cursor.fetchone()
+
+    if not fetched_user:
+        return jsonify({"error": "Invalid username or arg_uuid"}), 401
+
+    if session["isProUser"] != "Premium":
+        return jsonify({"error": "User  is not premium"}), 403
+
+    # Start streaming response
+    def generate_response():
+        search_results = SAE.Search(query=query)
+        
+        
+        process_wr:str=""
+        for result in search_results.get("organic"):
+            process_wr+= f"Title: {result['title']}\nUrl: {result['link']}\nSnippet:{result['snippet']}\n\n"
+        New_user_Prompt = USER_PROMPT.replace("[P1]", query).replace("[P2]", process_wr)
+        print(New_user_Prompt)
+
+        answer = get_novita_ai_response(key, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)["choices"][0]["message"]["content"]
+
+
+        for chunk in answer.splitlines():
+            yield f"{chunk}\n"  
+            time.sleep(0.1) 
+
+    return Response(generate_response(), mimetype='text/plain')
+
+@app.route("/api/thread-message", methods=["POST"])
+def api_threadMessage():
+    role = request.args.get("role")
+    if role not in ["assistant", "user"] or role is None:
+        return jsonify({"error": "Invalid role"}), 400
+    message = request.args.get("message")
+    if message is None:
+        return jsonify({"error": "Missing message"}), 400
+    user_uuid = request.args.get("arg_uuid")
+    if user_uuid is None or user_uuid not in sql_model.get_all_uuids(): # Create this function later in sql_model file
+        return jsonify({"error": "Invalid UUID"}), 400
+    sql_model.save_message_to_thread(user_uuid, role, message)  # Create this function later in sql_model file
+    
+        
 
 
 if __name__ == "__main__":
