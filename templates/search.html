@@ -41,10 +41,10 @@ Search
         <div class="row">
             <div class="col-md-12">
                 <!--<h2>AI RESPONSE Section</h2>-->
-                {% if session["isProUser"] %}
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Seai qwen/qwen-2.5-72b-instruct
+                {% if session["isProUser"] and session["is_authenticated"] %}
+                <div id="resp"class="card">
+                    <div id="resp"class="card-body text-center">
+                        <h5 id="resp" class="card-title">Seai qwen/qwen-2.5-72b-instruct
                         </h5>
                         <p id="response" class="Response">{{ response | safe }}</p>
                     </div>
@@ -56,40 +56,64 @@ Search
                     const password = encodeURIComponent("{{ session['uuid'] }}");
                     const query = encodeURIComponent("{{ search_query }}");
 
-                    async function fetchResponse() {
-                        const response = await fetch(`/get-response?username=${username}&arg_uuid=${password}&query=${query}`, {
-                            method: 'GET',
-                            headers: {
-                                'Accept': 'text/event-stream',
-                            },
-                        });
+                    function createLoadingAnimation(responseElement) {
+    const loadingChars = ['-', '/', '|', '\\'];
+    let charIndex = 0;
 
-                        const reader = response.body.getReader();
-                        const decoder = new TextDecoder();
-                        let done = false;
-                        let fullText = "";
+    const loadingInterval = setInterval(() => {
+        responseElement.innerHTML = loadingChars[charIndex];
+        charIndex = (charIndex + 1) % loadingChars.length;
+    }, 100);  // Change character every 100ms
 
-                        while (!done) {
-                            const { value, done: doneReading } = await reader.read();
-                            done = doneReading;
+    return loadingInterval;
+}
 
-                            if (value) {
-                                const text = decoder.decode(value, { stream: true });
-                                fullText += text; 
-                            }
-                        }
+async function fetchResponse() {
+    const responseElement = document.getElementById('response');
+    
+    // Clear previous content
+    responseElement.innerHTML = '';
 
-                        console.log("Raw API Response:", fullText); 
-                        
-                        typeWriter(fullText);
-                    }
+    // Start loading animation
+    const loadingInterval = createLoadingAnimation(responseElement);
+
+    const response = await fetch(`/get-response?username=${username}&arg_uuid=${password}&query=${query}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'text/event-stream',
+        },
+    });
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+    let fullText = "";
+
+    while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+
+        if (value) {
+            const text = decoder.decode(value, { stream: true });
+            fullText += text; 
+        }
+    }
+
+    // Stop loading animation
+    clearInterval(loadingInterval);
+
+    console.log("Raw API Response:", fullText); 
+    
+    typeWriter(fullText);
+}
 
                     function typeWriter(text) {
                         let i = 0;
                         const speed = 1; 
 
                         
-                        const cleanText = text.replace(/[^a-zA-Z0-9.,!?;:'" \n]/g, ' ').replace(/\s+/g, ' ').trim(); // Clean and normalize spaces
+                        // Keep brackets and other special characters
+                        const cleanText = text.replace(/\s+/g, ' ').trim();
 
                         console.log("Cleaned Text:", cleanText); // Debugging output
 

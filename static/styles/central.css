@@ -162,3 +162,7 @@ a{
 .centerIt {
     justify-content: center;
 }
+
+#resp {
+    background-color: transparent;
+}

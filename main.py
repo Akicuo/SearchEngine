@@ -66,7 +66,7 @@ def index():
     global default_pfp
     session.setdefault("username", None)
     session.setdefault("is_authenticated", False)
-    session.setdefault("isProUser", "Free")
+    session.setdefault("isProUser", False)
     session.setdefault("id", 0)
     session.setdefault("id", "")
     session.setdefault("img", default_pfp)
@@ -175,7 +175,7 @@ def get_response():
 @app.route("/logout")
 def logout():
     try:
-        session["is_authenticated"] = False
+        session.clear()
         flash("You have been logged out successfully.", "success")
         return redirect(url_for("index"))
     except Exception as e:
@@ -191,8 +191,7 @@ def history():
         server_saved_searches = sql_model.get_all_searches(session_id=session["id"])
     return render_template("history.html", 
                            current_user=session, 
-                           server_saved_searches=server_saved_searches, 
-                           session_history=session['session_history'],
+                           server_saved_searches=server_saved_searches,
                            current_page="history", title="History")
 
 @app.route("/about", methods=["GET"])
