@@ -66,7 +66,7 @@ Search
                                 type="button" 
                                 id="searchButton"
                             >
-                                <i class="bi bi-search"></i>
+                                <i class="bi  bi-question-square"></i>
                             </button>
                         </div>
                     </div>
@@ -174,7 +174,7 @@ Search
                                 const randomSpeed = typingSpeed + Math.random() * 10;
                                 setTimeout(type, randomSpeed);
                             } else {
-                                document.getElementById("StartCTButton").classList.remove("display-none")
+                                document.getElementById("StartCTButton").classList.toggle("display-none")
                                 responseElement.innerHTML = convertToBoldHyperlink(responseElement.innerHTML);
                                 
                             }
@@ -261,9 +261,7 @@ Search
                                 </div>
                             </div>
                         </div>
-                        {% endfor %}
-                    {% else %}
-                        <p>No images found.</p>
+                        {% endfor %}              
                     {% endif %}
                 </div>
             </div>
@@ -271,7 +269,7 @@ Search
             <!-- Organic Results Section -->
             <div class="col-md-12 mt-4">
                 <!-- <h2>Organic Results</h2> -->
-                <ul class="list-group">
+                <ul class="">
                     {% if results.organic %}
                         {% for result in results.organic %}
                         <li class="list-group-item">

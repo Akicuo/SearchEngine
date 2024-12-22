@@ -44,7 +44,7 @@ body {
     width: 250px; 
     height: 350px;
     object-fit: cover;
-    margin: 20px;
+    margin: 5px;
 }
 
 .topcard .card {
@@ -86,7 +86,7 @@ body {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(17, 17, 17, 0.05);
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
@@ -151,14 +151,13 @@ input:hover + .tooltip {
 }
 
 .list-group-item {
-    background-color:#404040;
+    background-color:none;
     padding: 10px;
-    border-bottom: 1px solid #333;
 }
 
 a{
     text-decoration: none;
-    color: #fff;
+    color: #0e4791;
 }
 
 .descriptions-content {
