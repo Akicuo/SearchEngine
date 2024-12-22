@@ -211,9 +211,14 @@ a{
     font-size: 14px;
 }
 
-.mh-500 {
-    min-height: 500px;
+
+.mh-300 {
+    min-height: 300px;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.display-none {
+    display: none;
 }

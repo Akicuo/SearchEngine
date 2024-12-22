@@ -11,7 +11,7 @@ Search
         <!-- Centered Search Container -->
         <div class="text-center mb-4">
             <h1 class="display-4">Search</h1>
-            <p class="lead">Discover, Search, Explore</p>
+            <p class="lead">Search -> Aquire Information</p>
         </div>
         
         <div class="search-container position-relative">
@@ -47,7 +47,7 @@ Search
                         <h5 id="resp" class="card-title">Seai <b>AI</b>
                         </h5>
                         <p id="response" class="Response">{{ response | safe }}</p>
-                        <div class="input-group StartCTButton">
+                        <div class="input-group display-none">
                             <!-- Follow up Input -->
                             <input 
                                 type="text" 
@@ -145,37 +145,45 @@ Search
 }
 
                     /**
-                     * Typewriter effect with improved text rendering
+                     * 
                      * @param {string} text
                      */
                      function typeWriter(text) {
+
+                        const processedTextv1 = text.replace(/\n/g, '<br>');
+                        const processedText = processedTextv1.replace("* ", '➣ ');
+                        
                         responseElement.innerHTML = ''; 
                         let i = 0;
                         const typingSpeed = 1; 
 
                         function type() {
-                            if (i < text.length) {
-                                if (text.substr(i, 4) === '<br>') {
+                            if (i < processedText.length) {
+                                // Check if the current substring is a <br> tag
+                                if (processedText.substr(i, 4) === '<br>') {
                                     responseElement.innerHTML += '<br>';
                                     i += 4;
                                 } else {
-                                    responseElement.innerHTML += text.charAt(i);
-                                    i++;
+                                    responseElement.innerHTML += processedText.charAt(i);
                                     responseElement.innerHTML = convertToBoldHyperlink(responseElement.innerHTML)
+                                    responseElement.innerHTML = responseElement.innerHTML.replace("* ", '➣ ');
+                                    i++;
+
                                 }
+                                
                                 const randomSpeed = typingSpeed + Math.random() * 10;
                                 setTimeout(type, randomSpeed);
                             } else {
-
-                                document.getElementById("StartCTButton").style.display = "block"; 
-                                responseElement.innerHTML = convertToBoldHyperlink(responseElement.innerHTML)
+                                document.getElementById("StartCTButton").classList.remove("display-none")
+                                responseElement.innerHTML = convertToBoldHyperlink(responseElement.innerHTML);
+                                
                             }
                         }
 
                         type();
                     }
 
-                    // Trigger the response fetching
+
                     fetchResponse();
                 });
                 </script>

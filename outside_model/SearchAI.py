@@ -7,7 +7,7 @@ def get_novita_ai_response(api_key, query, system_prompt="You are a helpful assi
         "Authorization": f"Bearer {api_key}"
     }
     data = {
-        "model": "meta-llama/llama-3.1-8b-instruct-max",
+        "model": "meta-llama/llama-3.3-70b-instruct",
         "messages": [
             {
                 "role": "system",
@@ -18,7 +18,7 @@ def get_novita_ai_response(api_key, query, system_prompt="You are a helpful assi
                 "content": query
             }
         ],
-        "max_tokens": 512
+        "max_tokens": 2048
     }
 
     response = requests.post(url, headers=headers, data=json.dumps(data))

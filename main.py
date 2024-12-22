@@ -46,7 +46,7 @@ Elon Musk [1][www.example.com] is a prominent entrepreneur known for his roles a
 """
 
 USER_PROMPT = """``
-Your task is to synthesize the information from the user's query and the web response into a coherent and informative answer. Ensure that your response is clear and provides value to the user Be sure to include those includes like [1][https://www.example.com] after every or 2 sentences. make sure every link starts with https://
+Your task is to synthesize the information from the user's query and the web response into a coherent and informative answer. Ensure that your response is clear and provides value to the user Be sure to include those includes like [1][https://www.example.com] after every or 2 sentences. make sure every link starts with 'https://' make sure that between the link and the number are square brackets, use good formatting with new lines and points
 ```
 USER
 [P1]
@@ -230,19 +230,18 @@ def api_response():
     def generate_response():
         search_results = SAE.Search(query=query)
         
+        process_wr = ""
+        for result in search_results.get("organic", []):
+            if "snippet" in result:
+                process_wr += f"Title: {result['title']}\nUrl: {result['link']}\nSnippet: {result['snippet']}\n\n"
         
-        process_wr:str=""
-        for result in search_results.get("organic"):
-            process_wr+= f"Title: {result['title']}\nUrl: {result['link']}\nSnippet:{result['snippet']}\n\n"
         New_user_Prompt = USER_PROMPT.replace("[P1]", query).replace("[P2]", process_wr)
         print(New_user_Prompt)
 
         answer = get_novita_ai_response(key, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)["choices"][0]["message"]["content"]
 
-
-        for chunk in answer.splitlines():
-            yield f"{chunk}\n"  
-            time.sleep(0.1) 
+        # Yield the entire answer as a single response
+        yield answer  # This will preserve new lines in the response
 
     return Response(generate_response(), mimetype='text/plain')
 
