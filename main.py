@@ -145,12 +145,12 @@ def history():
                            current_user=session, 
                            server_saved_searches=server_saved_searches,
                            current_page="history", title="History")
-
+# threads list var example: [{"title": "unicorn", "created_at": "18:47:00 22-12-2024"}]
 @app.route("/threads", methods=["GET"])
 def threads():
     return render_template("threads.html", 
                            current_user=session, 
-                           threads=[{"title": "unicorn", "created_at": "18:47:00 22-12-2024"}],
+                           threads=sql_model.get_all_threads(user=session["id"]),
                            current_page="threads", title="Threads")
 
 @app.route("/thread", methods=["GET"])
