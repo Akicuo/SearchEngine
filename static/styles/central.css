@@ -166,3 +166,11 @@ a{
 #resp {
     background-color: transparent;
 }
+
+.blue-text{
+    color: #3498db;
+}
+
+.mh-500 {
+    min-height: 500px;
+}

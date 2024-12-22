@@ -46,7 +46,7 @@ Search
                     <div id="resp"class="card-body text-left">
                         <h5 id="resp" class="card-title">Seai qwen/qwen-2.5-72b-instruct
                         </h5>
-                        <p id="response" class="Response">{{ response | safe }}</p>
+                        <p id="response " c lass="Response">{{ response | safe }}</p>
                         <button 
                             class="btn btn-primary display-none" 
                             type="button" 
@@ -54,7 +54,7 @@ Search
                             style="display: none;"
 
                         >
-                            Start SearChat Thread
+                            Start Thread Channel
                         </button>
                     </div>
                 </div>
@@ -119,25 +119,29 @@ Search
                             
                             typeWriter(fullText.trim());
 
+
                         } catch (error) {
                             console.error('Error fetching response:', error);
                             responseElement.innerHTML = 'An error occurred while fetching the response.';
                             clearInterval(loadingInterval);
                         }
                     }
+                    function convertToBoldHyperlink(text) {
+    const regex = /\[(\d+)\]\[(https?:\/\/[^\]]+)\]/g;
+    return text.replace(regex, '<b><a class="blue-text" href="$2">$1</a></b>');
+}
 
                     /**
                      * Typewriter effect with improved text rendering
-                     * @param {string} text - The text to be typed out
+                     * @param {string} text
                      */
-                    function typeWriter(text) {
+                     function typeWriter(text) {
                         responseElement.innerHTML = ''; 
                         let i = 0;
                         const typingSpeed = 1; 
 
                         function type() {
                             if (i < text.length) {
-                                // Handle line breaks and preserve formatting
                                 if (text.substr(i, 4) === '<br>') {
                                     responseElement.innerHTML += '<br>';
                                     i += 4;
@@ -145,12 +149,13 @@ Search
                                     responseElement.innerHTML += text.charAt(i);
                                     i++;
                                 }
-                                
-                                // Randomize typing speed slightly for more natural effect
                                 const randomSpeed = typingSpeed + Math.random() * 10;
                                 setTimeout(type, randomSpeed);
-                            };
-                            document.getElementById("StartCTButton").style.display = "block";
+                            } else {
+
+                                document.getElementById("StartCTButton").style.display = "block"; 
+                                responseElement.innerHTML = convertToBoldHyperlink(responseElement.innerHTML)
+                            }
                         }
 
                         type();

@@ -148,8 +148,15 @@ def history():
 
 @app.route("/threads", methods=["GET"])
 def threads():
-    return redirect(url_for("index"))
+    return render_template("threads.html", 
+                           current_user=session, 
+                           threads=[{"title": "unicorn", "created_at": "18:47:00 22-12-2024"}],
+                           current_page="threads", title="Threads")
 
+@app.route("/thread", methods=["GET"])
+def thread():
+    thread_id = request.args.get("id")
+    pass
 @app.route("/profile", methods=["GET"])
 def profile():
     return render_template("profile.html", 
@@ -183,6 +190,21 @@ def search():
 
 # Backend API starts here
 
+@app.route("/api/threads/create", methods=["POST"])
+def api_create_threads():
+    user_uuid = request.args.get("arg_uuid")
+    originated_search = request.args.get("originated_search")
+    assistant_message = request.args.get("assistant_message")
+    thread_title = request.args.get("thread_title")
+    
+    pass
+
+@app.route("/api/threads/remove", methods=["POST"])
+def api_remove_threads():
+    user_uuid = request.args.get("arg_uuid")
+    thread_id = request.args.get("thread_id")
+    pass
+
 @app.route("/api/response", methods=["GET"])
 def api_response():
     username = request.args.get("username")
@@ -204,7 +226,7 @@ def api_response():
     if session["isProUser"] != "Premium":
         return jsonify({"error": "User  is not premium"}), 403
 
-    # Start streaming response
+
     def generate_response():
         search_results = SAE.Search(query=query)
         
