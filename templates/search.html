@@ -7,8 +7,9 @@ Search
 {% block content %}
 
 
+    <div class="container mt-4">
         <!-- Centered Search Container -->
-        <div class="container-fluid d-flex flex-column justify-content-center align-items-center flex-grow-1">
+        <div class="text-center mb-4">
             <h1 class="display-4">Search</h1>
             <p class="lead">Discover, Search, Explore</p>
         </div>
@@ -138,6 +139,57 @@ async function fetchResponse() {
                     </div>
                 </div>
                 {% endif %}
+                <div class="modal fade" id="LoginModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content bg-dark">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Login</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="loginForm" method="post">
+                                    <div class="mb-3">
+                                        <label for="loginUsername" class="form-label">Username:</label>
+                                        <input type="text" class="form-control" id="loginUsername" name="username" required autocomplete="username">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="loginPassword" class="form-label">Password:</label>
+                                        <input type="password" class="form-control" id="loginPassword" name="password" required autocomplete="current-password">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Login</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pro User Modal -->
+                <div class="modal fade" id="proUserModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content bg-dark">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Upgrade to Pro</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="text-center">
+                                    <i class="bi bi-star-fill text-warning fs-1 mb-3"></i>
+                                    <h3>Unlock Pro Features</h3>
+                                    <p>Get access to Deep Search and advanced features!</p>
+                                    <ul class="list-unstyled">
+                                        <li><i class="bi bi-check-circle text-success me-2"></i>100 AI Smart Responses / month</li>
+                                        <li><i class="bi bi-check-circle text-success me-2"></i>Image Recognition</li>
+                                        <li><i class="bi bi-check-circle text-success me-2"></i>URL Filtering</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" id="purchaseProBtn">
+                                    Upgrade Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <!-- Images Section -->
 
