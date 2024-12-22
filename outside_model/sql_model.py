@@ -82,9 +82,23 @@ def Change_Profile_Picture(img_data, user_id):
 def get_all_threads(session_id) -> list:
     global connection
     cursor = connection.cursor()
-    cursor.execute("SELECT threads FROM searches WHERE user_id = %s ORDER BY timestamp DESC", (session_id,))
+    cursor.execute("SELECT * FROM threads WHERE user_id = %s ORDER BY timestamp DESC", (session_id,))
     threads_selected = cursor.fetchall()
     threads = []
     for thread in threads_selected:
         threads.append({"title": thread.get("title"),"id": thread.get("thread_id"), "created:_at": thread.get("thread_date")})
-    return threads                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+    return threads
+
+def get_thread_content(thread_id:int) -> dict:
+    global connection
+    cursor = connection.cursor()
+    cursor.execute("SELECT TOP 1 FROM threads WHERE thread = %s ORDER BY timestamp DESC", (thread_id,))
+    threads_selected = cursor.fetchone()[0]
+    return threads_selected
+
+def remove_thread(thread_id: int) -> dict:
+    global connection
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM threads WHERE thread_id = %s", (thread_id,))
+    connection.commit()
+    return {"message": "Thread removed successfully"}
