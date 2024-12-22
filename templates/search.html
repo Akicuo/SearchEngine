@@ -43,10 +43,19 @@ Search
                 <!--<h2>AI RESPONSE Section</h2>-->
                 {% if session["isProUser"] and session["is_authenticated"] %}
                 <div id="resp"class="card">
-                    <div id="resp"class="card-body text-center">
+                    <div id="resp"class="card-body text-left">
                         <h5 id="resp" class="card-title">Seai qwen/qwen-2.5-72b-instruct
                         </h5>
                         <p id="response" class="Response">{{ response | safe }}</p>
+                        <button 
+                            class="btn btn-primary display-none" 
+                            type="button" 
+                            id="StartCTButton"
+                            style="display: none;"
+
+                        >
+                            Start SearChat Thread
+                        </button>
                     </div>
                 </div>
                 <script>
@@ -122,9 +131,9 @@ Search
                      * @param {string} text - The text to be typed out
                      */
                     function typeWriter(text) {
-                        responseElement.innerHTML = ''; // Clear previous content
+                        responseElement.innerHTML = ''; 
                         let i = 0;
-                        const typingSpeed = 10; // Adjust typing speed (lower is faster)
+                        const typingSpeed = 1; 
 
                         function type() {
                             if (i < text.length) {
@@ -140,7 +149,8 @@ Search
                                 // Randomize typing speed slightly for more natural effect
                                 const randomSpeed = typingSpeed + Math.random() * 10;
                                 setTimeout(type, randomSpeed);
-                            }
+                            };
+                            document.getElementById("StartCTButton").style.display = "block";
                         }
 
                         type();
@@ -315,8 +325,14 @@ Search
     </footer>
 
     <script src="{{ url_for('static',filename='scripts/search.js') }}"></script>
-
+    
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .hide {
+            display: none;
+        }
+    </style>
 </body>
 </html>
 {% endblock %}
