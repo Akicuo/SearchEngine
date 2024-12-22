@@ -46,7 +46,7 @@ Elon Musk [1][www.example.com] is a prominent entrepreneur known for his roles a
 """
 
 USER_PROMPT = """``
-Your task is to synthesize the information from the user's query and the web response into a coherent and informative answer. Ensure that your response is clear and provides value to the user Be sure to include those includes like [1][https://www.example.com] after every or 2 sentences.
+Your task is to synthesize the information from the user's query and the web response into a coherent and informative answer. Ensure that your response is clear and provides value to the user Be sure to include those includes like [1][https://www.example.com] after every or 2 sentences. make sure every link starts with https://
 ```
 USER
 [P1]
@@ -54,7 +54,7 @@ USER
 ->
 ```
 WEB RESPONSE
-[P2] Your task is to synthesize the information from the user's query and the web response into a coherent and informative answer. Ensure that your response is clear and provides value to the user.
+[P2] 
 ```
 """
 def get_random_uuid() -> str:
@@ -150,7 +150,7 @@ def history():
 def threads():
     return render_template("threads.html", 
                            current_user=session, 
-                           threads=sql_model.get_all_threads(user=session["id"]),
+                           threads=sql_model.get_all_threads(session["id"]),
                            current_page="threads", title="Threads")
 
 @app.route("/thread", methods=["GET"])

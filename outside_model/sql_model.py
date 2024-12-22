@@ -82,11 +82,10 @@ def Change_Profile_Picture(img_data, user_id):
 def get_all_threads(session_id) -> list:
     global connection
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM threads WHERE user_id = %s ORDER BY timestamp DESC", (session_id,))
+    query = "SELECT thread_id, thread_title, thread_date FROM threads WHERE user_id = %s ORDER BY thread_date DESC"
+    cursor.execute(query, (session_id,))
     threads_selected = cursor.fetchall()
-    threads = []
-    for thread in threads_selected:
-        threads.append({"title": thread.get("title"),"id": thread.get("thread_id"), "created:_at": thread.get("thread_date")})
+    threads = [{"title": thread[1], "id": thread[0], "created_at": thread[2]} for thread in threads_selected]
     return threads
 
 def get_thread_content(thread_id:int) -> dict:

@@ -42,20 +42,33 @@ Search
             <div class="col-md-12">
                 <!--<h2>AI RESPONSE Section</h2>-->
                 {% if session["isProUser"] and session["is_authenticated"] %}
-                <div id="resp"class="card">
+                <div id="resp"class="card mh-300">
                     <div id="resp"class="card-body text-left">
-                        <h5 id="resp" class="card-title">Seai qwen/qwen-2.5-72b-instruct
+                        <h5 id="resp" class="card-title">Seai <b>AI</b>
                         </h5>
-                        <p id="response " c lass="Response">{{ response | safe }}</p>
-                        <button 
-                            class="btn btn-primary display-none" 
-                            type="button" 
-                            id="StartCTButton"
-                            style="display: none;"
-
-                        >
-                            Start Thread Channel
-                        </button>
+                        <p id="response" class="Response">{{ response | safe }}</p>
+                        <div class="input-group StartCTButton">
+                            <!-- Follow up Input -->
+                            <input 
+                                type="text" 
+                                class="form-control form-control-lg" 
+                                placeholder="Your Follow up question" 
+                                aria-label="FollowUp" 
+                                id="followupInput"
+                                autocomplete="off"
+                                autofocus
+                            >
+                            <span class="tooltip">Have AI answer your follow-up questions</span>
+                            
+                            <!-- Follow up Button -->
+                            <button 
+                                class="btn btn-outline-secondary" 
+                                type="button" 
+                                id="searchButton"
+                            >
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <script>
@@ -127,8 +140,8 @@ Search
                         }
                     }
                     function convertToBoldHyperlink(text) {
-    const regex = /\[(\d+)\]\[(https?:\/\/[^\]]+)\]/g;
-    return text.replace(regex, '<b><a class="blue-text" href="$2">$1</a></b>');
+                        const regex = /\[(\d+)\]\[(https?:\/\/[^\]]+)\]/g;
+                        return text.replace(regex, '<b><a class="blue-text" href="$2">$1</a></b>');
 }
 
                     /**
@@ -148,6 +161,7 @@ Search
                                 } else {
                                     responseElement.innerHTML += text.charAt(i);
                                     i++;
+                                    responseElement.innerHTML = convertToBoldHyperlink(responseElement.innerHTML)
                                 }
                                 const randomSpeed = typingSpeed + Math.random() * 10;
                                 setTimeout(type, randomSpeed);
