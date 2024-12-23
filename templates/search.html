@@ -174,7 +174,8 @@ Search
                                 const randomSpeed = typingSpeed + Math.random() * 10;
                                 setTimeout(type, randomSpeed);
                             } else {
-                                document.getElementById("StartCTButton").classList.toggle("display-none")
+                                document.getElementById("StartCTButton").classList.toggle("display-none");
+                                document.getElementById("StartCTButton").style.display = "block";
                                 responseElement.innerHTML = convertToBoldHyperlink(responseElement.innerHTML);
                                 
                             }
