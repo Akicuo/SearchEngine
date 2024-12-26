@@ -1,26 +1,38 @@
 import requests, json
 
-def get_novita_ai_response(api_key, query, system_prompt="You are a helpful assistant"):
-    url = "https://api.novita.ai/v3/openai/chat/completions"
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {api_key}"
-    }
-    data = {
-        "model": "meta-llama/llama-3.3-70b-instruct",
-        "messages": [
+
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.novita.ai/v3/openai"
+)
+def stream(api_key:str, system_prompt:str,query:str):
+    global client
+    client.api_key = api_key
+    model = "meta-llama/llama-3.3-70b-instruct"
+    stream = True
+    max_tokens = 8048
+
+    chat_completion_res = client.chat.completions.create(
+        model=model,
+        messages=[
             {
                 "role": "system",
-                "content": system_prompt
+                "content": system_prompt,
             },
             {
                 "role": "user",
-                "content": query
+                "content": query,
             }
         ],
-        "max_tokens": 2048
-    }
+        stream=stream,
+        max_tokens=max_tokens,
+    )
 
-    response = requests.post(url, headers=headers, data=json.dumps(data))
-    
-    return response.json()
+    if stream:
+        for chunk in chat_completion_res:
+            yield chunk.choices[0].delta.content or ""
+    else:
+        return chat_completion_res.choices[0].message.content
+
+

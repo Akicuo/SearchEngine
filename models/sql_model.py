@@ -17,9 +17,9 @@ def FindOutSubscriptionType(id):
     cursor = connection.cursor()
     cursor.execute("SELECT subscription FROM users WHERE id = %s", (id,))
     subscription = cursor.fetchone()[0]
-    if subscription == "free":
+    if subscription == "Free":
         return "Free"
-    elif subscription == "premium" or subscription == None:
+    elif subscription == "Premium" or subscription == None:
         return "Premium"
 
 def FindOutUsername(id) -> str:

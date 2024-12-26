@@ -7,13 +7,14 @@ from flask import (
     jsonify,
     session,
     flash,
-    Response
+    Response,
+    stream_with_context
 )
 import json, time
 from datetime import datetime
 from requests import get, post
 from models.om import SearchAgentEngine
-from models.SearchAI import get_novita_ai_response
+from models.SearchAI import stream
 import os
 import models.sql_model as sql_model
 import hashlib
@@ -164,7 +165,8 @@ def search():
         results=search_results,
         current_user=session,
         search_query=query,
-        current_page="search", title="Search"
+        current_page="search", title="Search",
+        sql_model=sql_model
     )
 
 
@@ -204,9 +206,8 @@ def api_response():
         return jsonify({"error": "Invalid username or arg_uuid"}), 401
     if sql_model.FindOutSubscriptionType(session["id"]) != "Premium":
         return jsonify({"error": "User  is not premium"}), 403
-        
 
-
+    @stream_with_context
     def generate_response():
         search_results = SAE.Search(query=query)
         
@@ -218,13 +219,12 @@ def api_response():
         New_user_Prompt = USER_PROMPT.replace("[P1]", query).replace("[P2]", process_wr)
         print(New_user_Prompt)
 
-        answer = get_novita_ai_response(key, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)["choices"][0]["message"]["content"]
+        answer = stream(key, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)
 
-        full_answer:str=""
+        full_answer = ""
         for chunk in answer:
-            full_answer += chunk
-            yield full_answer
-        #yield answer  # This will preserve new lines in the response
+            
+            yield chunk  # Yield the accumulated response so far
 
     return Response(generate_response(), mimetype='text/plain')
 
