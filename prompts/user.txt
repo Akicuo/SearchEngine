@@ -1,0 +1,10 @@
+Your task is to synthesize the information from the user's query and the web response into a coherent and informative answer. Ensure that your response is clear and provides value to the user Be sure to include those includes like [1][https://www.example.com] after every or 2 sentences. make sure every link starts with 'https://' make sure that between the link and the number are square brackets, use good formatting with new lines and points
+```
+USER
+[P1]
+```
+->
+```
+WEB RESPONSE
+[P2] 
+```

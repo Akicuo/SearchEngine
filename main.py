@@ -12,16 +12,17 @@ from flask import (
 import json, time
 from datetime import datetime
 from requests import get, post
-from outside_model.om import SearchAgentEngine
-from outside_model.SearchAI import get_novita_ai_response
+from models.om import SearchAgentEngine
+from models.SearchAI import get_novita_ai_response
 import os
-import outside_model.sql_model as sql_model
+import models.sql_model as sql_model
 import hashlib
 import requests
 import json
 from dotenv import load_dotenv
 import regex as re
 import uuid
+from models.file import read_content
 load_dotenv()
 
 app = Flask(__name__)
@@ -31,32 +32,11 @@ SAE = SearchAgentEngine(API_Key="LAYLAN-01i2mdabdj3929dk2lem2l2cd1f4762e84d")
 default_pfp = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/768px-Default_pfp.svg.png"
 
 key = os.getenv("OPENAI_API_KEY")
-if key is None:
-    print("Please set an OPENAI_API_KEY with a .env file")
-    exit(0)
 
-SYSTEM_PROMPT= """
-You are an advanced Retrieval-Augmented Generation (RAG) Information Extraction model. Your task is to analyze the user's query along with the web response to generate comprehensive and informative answers. Your responses should be detailed, articulate, and include relevant links formatted in square brackets like this: '[number][link]'. Only give Answers that are stated in the web response and do not hallucinate
+SYSTEM_PROMPT= read_content("prompts/system.txt")
+USER_PROMPT = read_content("prompts/user.txt")
 
-For example, if the user asks about a public figure, your response could look like this:
-Example Response:`
-``` 
-Elon Musk [1][www.example.com] is a prominent entrepreneur known for his roles as the CEO of SpaceX and Tesla [2][www.example.com]. He has significantly impacted the technology and automotive industries.
-```
-"""
 
-USER_PROMPT = """``
-Your task is to synthesize the information from the user's query and the web response into a coherent and informative answer. Ensure that your response is clear and provides value to the user Be sure to include those includes like [1][https://www.example.com] after every or 2 sentences. make sure every link starts with 'https://' make sure that between the link and the number are square brackets, use good formatting with new lines and points
-```
-USER
-[P1]
-```
-->
-```
-WEB RESPONSE
-[P2] 
-```
-"""
 def get_random_uuid() -> str:
     return str(uuid.uuid4())
 
@@ -222,9 +202,9 @@ def api_response():
 
     if not fetched_user:
         return jsonify({"error": "Invalid username or arg_uuid"}), 401
-
-    if session["isProUser"] != "Premium":
+    if sql_model.FindOutSubscriptionType(session["id"]) != "Premium":
         return jsonify({"error": "User  is not premium"}), 403
+        
 
 
     def generate_response():
@@ -240,8 +220,11 @@ def api_response():
 
         answer = get_novita_ai_response(key, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)["choices"][0]["message"]["content"]
 
-        # Yield the entire answer as a single response
-        yield answer  # This will preserve new lines in the response
+        full_answer:str=""
+        for chunk in answer:
+            full_answer += chunk
+            yield full_answer
+        #yield answer  # This will preserve new lines in the response
 
     return Response(generate_response(), mimetype='text/plain')
 

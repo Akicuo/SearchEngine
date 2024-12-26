@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API Response Streaming</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="search-container">
+        <div id="response-container" class="search-results-container">
+            <p id="initial-paragraph">Waiting for API response...</p>
+        </div>
+    </div>
+
+    <script>
+async function streamAPIResponse() {
+    const uuid = '32r-125';
+    const query = 'how to milk a cow';
+    const responseContainer = document.getElementById('response-container');
+    const initialParagraph = document.getElementById('initial-paragraph');
+
+    try {
+        const response = await fetch(`192.168.1.45:5000/api/response/?arg_uuid=${uuid}&query=${encodeURIComponent(query)}&username=sim2`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Check if the response supports streaming
+        if (response.body) {
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            
+            // Replace initial paragraph with a new paragraph for streaming
+            initialParagraph.remove();
+            const streamParagraph = document.createElement('p');
+            streamParagraph.classList.add('descriptions-content');
+            responseContainer.appendChild(streamParagraph);
+
+            while (true) {
+                const { done, value } = await reader.read();
+                
+                if (done) break;
+                
+                const chunk = decoder.decode(value);
+                
+                // Update paragraph with current chunk
+                streamParagraph.textContent += chunk;
+            }
+        } else {
+            // Fallback for non-streaming responses
+            const data = await response.json();
+            initialParagraph.textContent = data.response;
+        }
+    } catch (error) {
+        console.error('API Request Error:', error);
+        responseContainer.innerHTML = `
+            <p class="blue-text">Error fetching response: ${error.message}</p>
+        `;
+    }
+}
+
+// Trigger the API request when the page loads
+document.addEventListener('DOMContentLoaded', streamAPIResponse);
+    </script>
+</body>
+</html>
