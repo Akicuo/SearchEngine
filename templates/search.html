@@ -44,8 +44,19 @@ Search
                 {% if sql_model.FindOutSubscriptionType(session["id"]) and session["is_authenticated"] %}
                 <div id="resp"class="card mh-300">
                     <div id=""class="card-body text-left">
-                        <h5 id="" class="card-title">Seai <b>AI</b>
-                        </h5>
+                        <h5 id="" class="card-title">Seai <b>AI</b></h5>
+
+
+                        <div id="Loading-Animation" class="d-flex align-items-center black-spinner-container">
+
+                            <div class="spinner-border text-light me-3" role="status">
+                              <span class="visually-hidden">Thinking...</span>
+                            </div>
+                            <!-- Loading text -->
+                            <span>Thinking...</span>
+                        </div> 
+
+
                         <p id="response" class="Response">{{ response | safe }}</p>
                         <div class="input-group display-none">
                             <!-- Follow up Input -->
@@ -91,7 +102,7 @@ Search
                         }
                 
                         async function fetchResponse() {
-                            responseElement.innerHTML = ''; // Clear previous content
+                            responseElement.innerHTML = '';
                 
                             const loadingInterval = createLoadingAnimation(responseElement);
                 
@@ -105,7 +116,7 @@ Search
                 
                                 const reader = response.body.getReader();
                                 const decoder = new TextDecoder();
-                                let done = false;
+                                let done = false;   
                                 let fullText = "";
                 
                                 while (!done) {
@@ -114,14 +125,14 @@ Search
                 
                                     if (value) {
                                         const text = decoder.decode(value, { stream: true });
-                                        fullText += text; // Append new text to fullText
-                                        responseElement.innerHTML = fullText; // Append to the response element
+                                        fullText += text;
+                                        responseElement.innerHTML = fullText;
                                         responseElement.innerHTML = convertToBoldHyperlink(responseElement.innerHTML); // Process the current HTML
                                     }
                                 }
                 
                                 clearInterval(loadingInterval);
-                                typeWriter(fullText.trim()); // Process the full text after all chunks are received
+                                typeWriter(fullText.trim()); 
                 
                             } catch (error) {
                                 console.error('Error fetching response:', error);

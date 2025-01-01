@@ -221,10 +221,7 @@ def api_response():
 
         answer = stream(key, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)
 
-        full_answer = ""
-        for chunk in answer:
-            
-            yield chunk  # Yield the accumulated response so far
+        return answer
 
     return Response(generate_response(), mimetype='text/plain')
 

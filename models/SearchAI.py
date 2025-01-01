@@ -9,7 +9,7 @@ client = OpenAI(
 def stream(api_key:str, system_prompt:str,query:str):
     global client
     client.api_key = api_key
-    model = "meta-llama/llama-3.3-70b-instruct"
+    model = "meta-llama/llama-3.1-405b-instruct"
     stream = True
     max_tokens = 8048
 
@@ -33,6 +33,7 @@ def stream(api_key:str, system_prompt:str,query:str):
         for chunk in chat_completion_res:
             yield chunk.choices[0].delta.content or ""
     else:
+        # Currently set to return this
         return chat_completion_res.choices[0].message.content
 
 
