@@ -16,11 +16,14 @@ def FindOutSubscriptionType(id):
     global connection
     cursor = connection.cursor()
     cursor.execute("SELECT subscription FROM users WHERE id = %s", (id,))
-    subscription = cursor.fetchone()[0]
-    if subscription == "Free":
+    try:
+        subscription = cursor.fetchone()[0]
+        if subscription == "Free":
+            return "Free"
+        elif subscription == "Premium" or subscription == None:
+            return "Premium"
+    except:
         return "Free"
-    elif subscription == "Premium" or subscription == None:
-        return "Premium"
 
 def FindOutUsername(id) -> str:
     global connection
