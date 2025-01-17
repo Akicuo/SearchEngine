@@ -62,7 +62,7 @@ def handle_not_found(e):
 @app.route("/", methods=["GET", "POST"])
 def index():
     global default_pfp
-    session["nem"] = None
+    session["liu"] = None
     return render_template("index.html", session=session)
 
 
@@ -78,7 +78,7 @@ def auth():
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
             if password != confirm_password:
-                print("Passwords do not match", "error")
+                session["liu"] = "Passwords do not match"
                 return render_template("index.html", current_user=session)
             if sql_model.check_user_exists(username, email):
                 print("User already exists", "error")

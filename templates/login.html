@@ -37,6 +37,11 @@
     </header>
 
     <div class="auth-container">
+        {% if session.get('liu') %}
+            <div class="error-message">
+                {{ session['liu'] }}
+            </div>
+        {% endif %}
         <form action="/auth" method="POST">
             <div class="form-group">
                 <label for="username">Username:</label>
