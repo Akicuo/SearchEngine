@@ -1,3 +1,6 @@
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const searchResults = document.querySelector('.searchResults');
     const searchInput = document.getElementById('searchInput');
