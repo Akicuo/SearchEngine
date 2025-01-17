@@ -3,3 +3,8 @@ VirtualEnv
 venv
 env
 config.json
+*cpython*
+
+# Byte-compiled files
+__pycache__/
+models/__pycache__/
