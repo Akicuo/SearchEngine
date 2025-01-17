@@ -4,6 +4,7 @@ import json
 class Serper:
     def __init__(self, api_key):
         self.base_url = "https://google.serper.dev/"
+        print(f"USING API KEY = ", api_key)
         self.headers = {
         'X-API-KEY': api_key,
         'Content-Type': 'application/json'
@@ -12,23 +13,37 @@ class Serper:
     def search_images(self, query, num_results=10):
         url = f"{self.base_url}/images"
         try:
-            response = requests.post(url, headers=self.headers, params={"q": query, "num": num_results}),
-            return response.json()
+            payload = json.dumps({
+            "q": query,
+            "num": 100
+            })
+            response = requests.post(url, headers=self.headers, data=payload)
+            
+            return json.loads(response.text)
         except requests.exceptions.RequestException as e:
             return {"error": str(e)}
 
     def search_discover(self, query, num_results=10):
+        
         url = f"{self.base_url}/search"
         try:
-            response = requests.post(url, headers=self.headers, params={"q": query, "num": num_results}),
-            return response.json()
+            payload = json.dumps({
+            "q": query,
+            "num": 100
+            })
+            response = requests.post(url, headers=self.headers, data=payload)
+            return json.loads(response.text)
         except requests.exceptions.RequestException as e:
             return {"error": str(e)}
         
     def search_news(self, query, num_results=10):
         url = f"{self.base_url}/search"
         try:
-            response = requests.post(url, headers=self.headers, params={"q": query, "num": num_results}),
-            return response.json()
+            payload = json.dumps({
+            "q": query,
+            "num": 100
+            })
+            response = requests.post(url, headers=self.headers, data=payload)
+            return json.loads(response.text)
         except requests.exceptions.RequestException as e:
             return {"error": str(e)}

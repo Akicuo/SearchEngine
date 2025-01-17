@@ -250,7 +250,7 @@ a {
     color: white;
 }
 
-a:hover {
+.WebSearchCatag:hover {
     box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
 }
 
@@ -260,3 +260,63 @@ a:hover {
     margin-right: 40px;
 }
 
+.searchResults {
+    display: flex;
+    margin: 20px;
+    row-gap: 20px;
+    flex-wrap: wrap;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+.blurred-text {
+    animation: blur 2s infinite;
+}
+
+@keyframes blur {
+    0% {
+        filter: blur(10px);
+    }
+    50% {
+        filter: blur(5px);
+    }
+    100% {
+        filter: blur(15px);
+    }
+}
+
+
+.col {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+}
+
+.active {
+    background-color: red;
+}
+a p {
+    max-width: 80%;
+}
+
+a h2 {
+    font-size: 14px;
+}
+a h5 {
+    font-size: 14px;
+    color: aqua;
+}
+a p:hover {
+    font-size: 101%
+}
+
+a h2:hover {
+    font-size: 101%
+}
+a h5:hover {
+    font-size: 101%
+}

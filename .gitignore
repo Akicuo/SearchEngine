@@ -1,5 +1,5 @@
 se/
-*.env
 VirtualEnv
 venv
 env
+config.json

@@ -34,12 +34,12 @@
         
     </header>
     <div class="searchNav">
-        <form id="searchForm">
+        <form id="searchForm col">
             <input type="text" class="search-input" id="searchInput" value="{{ query }}">
             <button type="submit" class="search-button" id="searchButton" data-lang-key="search" >Search</button>
         </form>
         <div class="searchTypes">
-            <a class="WebSearchCatag" href="/search?cat=discover">
+            <a class="WebSearchCatag active" href="/search?cat=discover">
                 Discover 
             <a>
             <a class="WebSearchCatag" href="/search?cat=images">
@@ -56,6 +56,41 @@
             <a>
         </div>
     </div>
+    <main>
+        <div class="searchResults column blurred-text" id="searchResults">
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+        </div>
+
+    </main>
 
     <div class="results">
         
@@ -65,7 +100,7 @@
     
     
     <script src="{{ url_for('static',filename='scripts/search.js') }}"></script>
-
+    <script src="{{ url_for('static',filename='scripts/serper.js') }}"></script>
     <script src="{{ url_for('static',filename='scripts/translate.js') }}"></script>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}" integrity="{{ url_for('static', filename='styles/main.css', _external=True) }}" crossorigin="anonymous">

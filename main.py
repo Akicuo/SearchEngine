@@ -20,32 +20,25 @@ import models.sql_model as sql_model
 import hashlib
 import requests
 import json
-from dotenv import load_dotenv
+from dotenv import (load_dotenv, dotenv_values)
 import regex as re
 import uuid
 from models.file import read_content
 
 
 
-load_dotenv(dotenv_path=".env")
-NOVITA_API_KEY = os.getenv("NOVITA_API_KEY")
-SERPER_DEV_API_KEY = os.getenv("SERPER_API_KEY")
-SUPABASE_API_KEY = os.getenv("SUPABASE_API_KEY")
-SUPABASE_URL = os.getenv("SUPABASE_URL")
+config: dict = {}
+with open("config.json", "r") as f:
+    config = json.load(f)
+    print("Config loaded from file")
+    print(config)
 
-if NOVITA_API_KEY is None or SERPER_DEV_API_KEY is None or SUPABASE_API_KEY is None or SUPABASE_URL is None:
-    print("API keys not found in environment variables. Please check your .env file or create it.")
-    if ".env" not in os.listdir():
-        with open(".env", "w") as f:
+NOVITA_API_KEY = config["NOVITA_API_KEY"]
+SERPER_DEV_API_KEY = config["SERPER_DEV_API_KEY"]
+SUPABASE_API_KEY = config["SUPABASE_API_KEY"]
+SUPABASE_URL = config["SUPABASE_URL"]
 
-            f.write(f"NOVITA_API_KEY={os.getenv('NOVITA_API_KEY', 'x'*25)}\n")
-            f.write(f"SERPER_API_KEY={os.getenv('SERPER_API_KEY', 'x'*25)}\n")
-            f.write(f"SUPABASE_API_KEY={os.getenv('SUPABASE_API_KEY', 'x'*25)}\n")
-            f.write(f"SUPABASE_URL={os.getenv('SUPABASE_URL', 'x'*25)}\n")
-    else:
-        print("Please add the API keys to your .env file.")
-else:
-    print("API keys loaded successfully.")
+
 
 try:
     SYSTEM_PROMPT= read_content("prompts/system.txt")
@@ -187,18 +180,18 @@ def search():
 
 # Backend API starts here
 
-@app.route("/api/serp", methods=["POST"])
+@app.route("/api/serper", methods=["POST", "GET"])
 def api_serper_search():
-    cat = request.args.get("cat")
+    cat = request.args.get("cat", "discover").lower()
     query = request.args.get("q")
     if "images" == cat:
-        return serper.search_images(query=query)
+        return jsonify(serper.search_images(query=query))
     elif "news" == cat:
-        return serper.search_news(query=query)
+        return jsonify(serper.search_news(query=query))
     elif "discover" == cat:
-        return serper.search_discover(query=query)
+        return jsonify(serper.search_discover(query=query))
     else:
-        return {"error": "Invalid category"}, 400
+        return jsonify({"error": "Invalid category"}), 400
         
     
 
