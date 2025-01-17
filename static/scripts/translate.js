@@ -3,7 +3,7 @@ const translations = {
     search: 'Search',
         home: 'Home',
         imageLens: 'Image Lens',
-        about: 'About',
+        costs: 'Pricing',
         contact: 'Contact',
         login: 'Login',
         register: 'Register',
@@ -11,23 +11,11 @@ const translations = {
         imageLensTitle: 'Image Lens',
         imageLensDescription: 'Upload an image for advanced search'
     },
-    zh: {
-        search: '搜索',
-        home: '主页',
-        imageLens: '图像搜索',
-        about: '关于',
-        contact: '联系',
-        login: '登录',
-        register: '注册',
-        searchPlaceholder: '搜索...',
-        imageLensTitle: '图像搜索',
-        imageLensDescription: '上传图像以进行高级搜索'
-    },
     de: {
         search: 'Suchen',
         home: 'Startseite',
         imageLens: 'Bild-Suche',
-        about: 'Über',
+        costs: 'Kosten',
         contact: 'Kontakt',
         login: 'Anmelden',
         register: 'Registrieren',
