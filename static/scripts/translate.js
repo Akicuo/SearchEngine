@@ -27,15 +27,15 @@ const translations = {
     }
 };
 
-// Language Change Handler
+
 function changeLanguage(lang) {
-    // Update Navigation Links
+
     document.querySelectorAll('[data-lang-key]').forEach(element => {
         const key = element.getAttribute('data-lang-key');
         element.textContent = translations[lang][key];
     });
 
-    // Update Search Input Placeholder
+
     const searchInput = document.querySelector('.search-input');
     if (searchInput) {
         searchInput.placeholder = translations[lang].searchPlaceholder;
@@ -49,16 +49,16 @@ function changeLanguage(lang) {
         imageLensDescription.textContent = translations[lang].imageLensDescription;
     }
 
-    // Optional: Store language preference
+
     localStorage.setItem('selectedLanguage', lang);
 }
 
-// Language Selector Event Listener
+
 document.getElementById('languageSelector').addEventListener('change', function(e) {
     changeLanguage(e.target.value);
 });
 
-// Check for Stored Language Preference
+
 document.addEventListener('DOMContentLoaded', () => {
     const storedLang = localStorage.getItem('selectedLanguage') || 'en';
     document.getElementById('languageSelector').value = storedLang;

@@ -66,12 +66,13 @@ def index():
     session.setdefault("is_authenticated", False)
     session.setdefault("isProUser", False)
     # , current_user=session, current_page="home", title="Home
-    return render_template("homesearch.html", session=session)
+    return render_template("index.html", session=session)
 
 
 @app.route("/auth", methods=["GET", "POST"])
 def auth():
     if request.method == "POST":
+
         if request.form.get("email"):
             username = request.form.get("username")
             email = request.form.get("email")
@@ -80,7 +81,7 @@ def auth():
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
             if password != confirm_password:
-                flash("Passwords do not match", "error")
+                print("Passwords do not match", "error")
                 return render_template("index.html", current_user=session)
 
             try:
@@ -90,10 +91,11 @@ def auth():
                 )
                 cursor.execute(query, (username, email, hashed_password, get_random_uuid()))
                 sql_model.connection.commit()
-                flash("Registration successful! You can now log in.", "success")
+                print("Registration successful! You can now log in.", "success")
+                session["user"] = True
                 return redirect(url_for("index"))
             except Exception as e:
-                flash("Registration failed: " + str(e), "error")
+                print("Registration failed: " + str(e), "error")
                 return render_template("index.html", current_user=session)
         else:
             username = request.form.get("username")
@@ -108,19 +110,16 @@ def auth():
                 fetched_user = cursor.fetchone()
 
                 if fetched_user:
-                    session["id"] = fetched_user["id"]
-                    session["username"] = fetched_user["username"]
-                    session["is_authenticated"] = True
-                    session["isProUser"] = fetched_user["subscription"]
-                    session["uuid"] = fetched_user["uuid"]
+                    session["user"] = True
 
-                    flash("Login successful!", "success")
+                    print("Login successful!")
                     return redirect(url_for("index"))
                 else:
-                    flash("Invalid username or password", "error")
+                    print("Invalid username or password")
                     return render_template("index.html", current_user=session)
             except Exception as e:
                 print("Error: " + str(e))
+            
 
     if "skipTo" in request.args:
         if request.args.get("skipTo") == "register":
