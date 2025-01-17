@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+
+{% block title %}
+Search
+{% endblock %}
+
+{% block content %}
+
+
+    <div class="container mt-4">
+        <!-- Centered Search Container -->
+        <div class="text-center mb-4">
+            <h1 class="display-4">Search</h1>
+            <p class="lead">Search -> Aquire Information</p>
+        </div>
+        
+        <div class="search-container position-relative">
+            <div class="input-group justify-content-center">
+                <div class="col-md-8"> <!-- Adjust the column size here -->
+                    <input 
+                        type="search" 
+                        class="form-control form-control-lg" 
+                        placeholder="Search anything..." 
+                        aria-label="Search" 
+                        id="searchInput"
+                        value="{{ search_query }}"
+                    >
+                </div>
+                <span class="tooltip">Powered by Laylan.click and Serper.dev</span>
+                
+                <!-- Search Button -->
+                <button 
+                    class="btn btn-outline-secondary" 
+                    type="button" 
+                    id="searchButton"
+                >
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <!--<h2>AI RESPONSE Section</h2>-->
+                {% if sql_model.FindOutSubscriptionType(session["id"]) and session["is_authenticated"] %}
+                <div id="resp"class="card mh-300">
+                    <div id=""class="card-body text-left">
+                        <h5 id="" class="card-title">Seai <b>AI</b></h5>
+
+
+                        <div id="Loading-Animation" class="d-flex align-items-center black-spinner-container">
+
+                            <div class="spinner-border text-light me-3" role="status">
+                              <span class="visually-hidden">Thinking...</span>
+                            </div>
+                            <!-- Loading text -->
+                            <span>Thinking...</span>
+                        </div> 
+
+
+                        <p id="response" class="Response">{{ response | safe }}</p>
+                        <div class="input-group display-none">
+                            <!-- Follow up Input -->
+                            <input 
+                                type="text" 
+                                class="form-control form-control-lg" 
+                                placeholder="Your Follow up question" 
+                                aria-label="FollowUp" 
+                                id="followupInput"
+                                autocomplete="off"
+                                autofocus
+                            >
+                            <span class="tooltip">Have AI answer your follow-up questions</span>
+                            
+                            <!-- Follow up Button -->
+                            <button 
+                                class="btn btn-outline-secondary" 
+                                type="button" 
+                                id="searchButton"
+                            >
+                                <i class="bi  bi-question-square"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const responseElement = document.getElementById('response');
+                        const username = encodeURIComponent("{{ session['username'] }}");
+                        const password = encodeURIComponent("{{ session['uuid'] }}");
+                        const query = encodeURIComponent("{{ search_query }}");
+                
+                        function createLoadingAnimation(responseElement) {
+                            const loadingChars = ['-', '/', '|', '\\'];
+                            let charIndex = 0;
+                
+                            const loadingInterval = setInterval(() => {
+                                responseElement.innerHTML = loadingChars[charIndex];
+                                charIndex = (charIndex + 1) % loadingChars.length;
+                            }, 100);
+                
+                            return loadingInterval;
+                        }
+                
+                        async function fetchResponse() {
+                            responseElement.innerHTML = '';
+                
+                            const loadingInterval = createLoadingAnimation(responseElement);
+                
+                            try {
+                                const response = await fetch(`/api/response?username=${username}&arg_uuid=${password}&query=${query}`, {
+                                    method: 'GET',
+                                    headers: {
+                                        'Accept': 'text/event-stream',
+                                    },
+                                });
+                
+                                const reader = response.body.getReader();
+                                const decoder = new TextDecoder();
+                                let done = false;   
+                                let fullText = "";
+                
+                                while (!done) {
+                                    const { value, done: doneReading } = await reader.read();
+                                    done = doneReading;
+                
+                                    if (value) {
+                                        const text = decoder.decode(value, { stream: true });
+                                        fullText += text;
+                                        responseElement.innerHTML = fullText;
+                                        responseElement.innerHTML = convertToBoldHyperlink(responseElement.innerHTML); // Process the current HTML
+                                    }
+                                }
+                
+                                clearInterval(loadingInterval);
+                                typeWriter(fullText.trim()); 
+                
+                            } catch (error) {
+                                console.error('Error fetching response:', error);
+                                responseElement.innerHTML = 'An error occurred while fetching the response.';
+                                clearInterval(loadingInterval);
+                            }
+                        }
+                
+                        function convertToBoldHyperlink(text) {
+                            const regex = /\[(\d+)\]\[(https?:\/\/[^\]]+)\]/g;
+                            return text.replace(regex, '<b><a class="blue-text" href="$2">$1</a></b>');
+                        }
+                
+                        function typeWriter(text) {
+                            const processedTextv1 = text.replace(/\n/g, '<br>');
+                            const processedText = processedTextv1.replace("* ", '➣ ');
+                
+                            responseElement.innerHTML = ''; 
+                            let i = 0;
+                            const typingSpeed = 1; 
+                
+                            function type() {
+                                if (i < processedText.length) {
+                                    if (processedText.substr(i, 4) === '<br>') {
+                                        responseElement.innerHTML += '<br>';
+                                        i += 4;
+                                    } else {
+                                        responseElement.innerHTML += processedText.charAt(i);
+                                        responseElement.innerHTML = convertToBoldHyperlink(responseElement.innerHTML);
+                                        responseElement.innerHTML = responseElement.innerHTML.replace("* ", '➣ ');
+                                        i++;
+                                    }
+                
+                                    const randomSpeed = typingSpeed + Math.random() * 10;
+                                    setTimeout(type, randomSpeed);
+                                } else {
+                                    document.getElementById("StartCTButton").classList.toggle("display-none");
+                                    document.getElementById("StartCTButton").style.display = "block";
+                                    responseElement.innerHTML = convertToBoldHyperlink(responseElement.innerHTML);
+                                }
+                            }
+                
+                            type();
+                        }
+                
+                        fetchResponse();
+                    });
+                </script>
+                {% else %}
+                <div class="card bg-warning">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-dark">Upgrade for Full Access</h5>
+                        <p id="response" class="Response text-dark">Please upgrade to premium to view the full AI response.</p>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="modal fade" id="LoginModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content bg-dark">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Login</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="loginForm" method="post">
+                                    <div class="mb-3">
+                                        <label for="loginUsername" class="form-label">Username:</label>
+                                        <input type="text" class="form-control" id="loginUsername" name="username" required autocomplete="username">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="loginPassword" class="form-label">Password:</label>
+                                        <input type="password" class="form-control" id="loginPassword" name="password" required autocomplete="current-password">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Login</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pro User Modal -->
+                <div class="modal fade" id="proUserModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content bg-dark">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Upgrade to Pro</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="text-center">
+                                    <i class="bi bi-star-fill text-warning fs-1 mb-3"></i>
+                                    <h3>Unlock Pro Features</h3>
+                                    <p>Get access to Deep Search and advanced features!</p>
+                                    <ul class="list-unstyled">
+                                        <li><i class="bi bi-check-circle text-success me-2"></i>100 AI Smart Responses / month</li>
+                                        <li><i class="bi bi-check-circle text-success me-2"></i>Image Recognition</li>
+                                        <li><i class="bi bi-check-circle text-success me-2"></i>URL Filtering</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" id="purchaseProBtn">
+                                    Upgrade Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Images Section -->
+
+                <div class="row  justify-content-center">
+                    {% if results.images %}
+                        {% for image in results.images %}
+                        <div class="col-md-4 mb-3 topcard">
+                            <div class="card">
+                                <img src="{{ image.imageUrl }}" class="card-img-top" alt="{{ image.title }}">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ image.title }}</h5>
+                                    <a href="{{ image.link }}" target="_blank" class="btn btn-primary">View More</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}              
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Organic Results Section -->
+            <div class="col-md-12 mt-4">
+                <!-- <h2>Organic Results</h2> -->
+                <ul class="">
+                    {% if results.organic %}
+                        {% for result in results.organic %}
+                        <li class="list-group-item">
+                            <h5><a href="{{ result.link }}" target="_blank">{{ result.title }}</a></h5>
+                            <p class="descriptions-content">{{ result.snippet }}</p>
+                            {% if result.sitelinks %}
+                            <ul>
+                                {% for sitelink in result.sitelinks %}
+                                <li><a href="{{ sitelink.link }}" target="_blank">{{ sitelink.title }}</a></li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <p>No organic results found.</p>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mt-4">
+                    <h2>People Also Ask</h2>
+                    <ul class="list-group">
+                        {% if results.peopleAlsoAsk %}
+                            {% for question in results.peopleAlsoAsk %}
+                            <li class="list-group-item">
+                                <h5><a href="{{ question.link }}" target="_blank">{{ question.question }}</a></h5>
+                                <p class="lower-text">{{ question.snippet }}</p>
+                            </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item">No questions found.</li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div class="col-md-6 mt-4"> 
+                    <h2>People also search</h2>
+                    <ul class="list-group">
+                        {% if results.relatedSearches %}
+                            {% for search in results.relatedSearches %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center lower-text">
+                                {{ search.query }}
+                                <a href="{{ url_for('search', q=search.query) }}" class="badge bg-primary rounded-pill" target="_blank">
+                                    <i class="bi bi-search"></i>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item">No related searches found.</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-12 mt-4">
+                <!-- <h2>Top Stories</h2> -->
+                <div class="row">
+                    {% for story in results.topStories %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <img src="{{ story.imageUrl }}" class="card-img-top" alt="{{ story.title }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ story.title }}</h5>
+                                <p class="card-text"><small class="text-muted">{{ story.date }} - {{ story.source }}</small></p>
+                                <a href="{{ story.link }}" target="_blank" class="btn btn-primary">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="mt-auto bg-dark text-white text-center py-3">
+        <p>&copy; 2024 Seai. All rights reserved.</p>
+    </footer>
+
+    <script src="{{ url_for('static',filename='scripts/search.js') }}"></script>
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .hide {
+            display: none;
+        }
+    </style>
+</body>
+</html>
+{% endblock %}

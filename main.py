@@ -12,7 +12,7 @@ from flask import (
 )
 import json, time
 from datetime import datetime
-from requests import get, post
+from models.serper import Serper
 from models.om import SearchAgentEngine
 from models.SearchAI import stream
 import os
@@ -24,8 +24,10 @@ from dotenv import load_dotenv
 import regex as re
 import uuid
 from models.file import read_content
-load_dotenv()
 
+
+
+load_dotenv(dotenv_path=".env")
 NOVITA_API_KEY = os.getenv("NOVITA_API_KEY")
 SERPER_DEV_API_KEY = os.getenv("SERPER_API_KEY")
 SUPABASE_API_KEY = os.getenv("SUPABASE_API_KEY")
@@ -45,11 +47,13 @@ if NOVITA_API_KEY is None or SERPER_DEV_API_KEY is None or SUPABASE_API_KEY is N
 else:
     print("API keys loaded successfully.")
 
+try:
+    SYSTEM_PROMPT= read_content("prompts/system.txt")
+    USER_PROMPT = read_content("prompts/user.txt")
+except Exception as e:
+    print(f"Error reading prompts: {e}")
 
-SYSTEM_PROMPT= read_content("prompts/system.txt")
-USER_PROMPT = read_content("prompts/user.txt")
-
-
+serper = Serper(SERPER_DEV_API_KEY)
 app = Flask(__name__)
 app.secret_key = app.secret_key = os.urandom(16)
 
@@ -174,26 +178,30 @@ def profile():
 def search():
     global key, SYSTEM_PROMPT, USER_PROMPT
     query = request.args.get("q")
-    search_results = SAE.Search(query=query)
-
-    
-
-    
-
-    if sql_model.id_valid(session["id"]):
-        sql_model.add_to_searches(session["id"], query=query)
 
     return render_template(
         "search.html",
-        results=search_results,
-        current_user=session,
-        search_query=query,
-        current_page="search", title="Search",
-        sql_model=sql_model
+        query=query
     )
 
 
 # Backend API starts here
+
+@app.route("/api/serp", methods=["POST"])
+def api_serper_search():
+    cat = request.args.get("cat")
+    query = request.args.get("q")
+    if "images" == cat:
+        return serper.search_images(query=query)
+    elif "news" == cat:
+        return serper.search_news(query=query)
+    elif "discover" == cat:
+        return serper.search_discover(query=query)
+    else:
+        return {"error": "Invalid category"}, 400
+        
+    
+
 
 @app.route("/api/threads/create", methods=["POST"])
 def api_create_threads():

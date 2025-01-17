@@ -2,18 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Seai 2.0/title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
+    <title>Seai 2.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=3.0">
+    <meta name="description" content="Seai 2.0">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <a href="#" class="logo">Seai 2.0</a>
         <nav class="nav-links">
-            <a href="#" data-lang-key="home">Home</a>
-            <a href="#" data-lang-key="imageLens">Image Lens</a>
-            <a href="#" data-lang-key="about">About</a>
-            <a href="#" data-lang-key="contact">Contact</a>
+            <a href="/" data-lang-key="home">Home</a>
+            <a href="/pricing" data-lang-key="about">Pricing</a>
+            <a href="/contact" data-lang-key="contact">Contact</a>
             
             <!-- Language Dropdown -->
             <div class="language-dropdown">
@@ -31,7 +32,7 @@
     </header>
 
     <div class="search-container">
-        <div class="logo" style="font-size: 48px; margin-bottom: 20px;">Vysune 2.0</div>
+        <div class="logo" style="font-size: 48px; margin-bottom: 20px;">Seai 2.0</div>
         <form id="searchForm">
             <input type="text" class="search-input" id="searchInput" placeholder="Search...">
             <button type="submit" class="search-button" id="searchButton" data-lang-key="search">Search</button>
@@ -72,6 +73,8 @@
     <script src="{{ url_for('static',filename='scripts/search.js') }}"></script>
 
     <script src="{{ url_for('static',filename='scripts/translate.js') }}"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}" integrity="{{ url_for('static', filename='styles/main.css', _external=True) }}" crossorigin="anonymous">
 
 
 </body>
