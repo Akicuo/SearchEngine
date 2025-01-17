@@ -3,12 +3,12 @@ import requests, json
 
 from openai import OpenAI
 
-client = OpenAI(
-    base_url="https://api.novita.ai/v3/openai"
-)
+
 def stream(api_key:str, system_prompt:str,query:str):
     global client
-    client.api_key = api_key
+    client = OpenAI(api_key=api_key,
+    base_url="https://api.novita.ai/v3/openai"
+)
     model = "meta-llama/llama-3.1-70b-instruct"
     stream = True
     max_tokens = 8048

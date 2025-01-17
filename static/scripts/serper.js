@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 data.images.forEach(item => {
                     document.querySelector('.searchResults').classList.toggle('image-results', true);
                     const result = document.createElement('img');
-                    result.src = item.imageUrl;
+                    result.src = item.thumbnailUrl;
                     result.alt = item.title || 'Image';
                     result.className = "ImgResult";
                     searchResults.appendChild(result);

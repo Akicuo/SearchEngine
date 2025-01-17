@@ -13,7 +13,6 @@ from flask import (
 import json, time
 from datetime import datetime
 from models.serper import Serper
-from models.om import SearchAgentEngine
 from models.SearchAI import stream
 import os
 import models.sql_model as sql_model
@@ -257,7 +256,7 @@ def api_response():
         New_user_Prompt = USER_PROMPT.replace("[P1]", query).replace("[P2]", process_wr)
         print(New_user_Prompt)
 
-        answer = stream(key, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)
+        answer = stream(SERPER_DEV_API_KEY, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)
 
         return answer
 
