@@ -62,10 +62,7 @@ def handle_not_found(e):
 @app.route("/", methods=["GET", "POST"])
 def index():
     global default_pfp
-    session.setdefault("username", None)
-    session.setdefault("is_authenticated", False)
-    session.setdefault("isProUser", False)
-    # , current_user=session, current_page="home", title="Home
+    session["nem"] = None
     return render_template("index.html", session=session)
 
 
@@ -82,6 +79,9 @@ def auth():
 
             if password != confirm_password:
                 print("Passwords do not match", "error")
+                return render_template("index.html", current_user=session)
+            if sql_model.check_user_exists(username, email):
+                print("User already exists", "error")
                 return render_template("index.html", current_user=session)
 
             try:

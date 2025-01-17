@@ -104,3 +104,13 @@ def remove_thread(thread_id: int) -> dict:
     cursor.execute("DELETE FROM threads WHERE thread_id = %s", (thread_id,))
     connection.commit()
     return {"message": "Thread removed successfully"}
+
+def check_user_exists(username, email) -> bool:
+    global connection
+    cursor = connection.cursor()
+    cursor.execute("SELECT 1 FROM users WHERE username = %s OR email = %s", (username, email))
+    p = cursor.fetchone()
+    if p is not None:
+        return True
+    else:
+        return False
