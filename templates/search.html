@@ -27,8 +27,12 @@
         
         <div>
             <div class="auth-links">
-                <a href="#" data-lang-key="login">Login</a>
-                <a href="#" data-lang-key="register">Register</a>
+                {% if session.get('user') %}
+                <a href="{{ url_for('logout') }}" data-lang-key="logout">Logout</a>
+            {% else %}
+                <a href="/auth?skipTo=Login" data-lang-key="login">Login</a>
+                <a href="/auth?skipTo=Register" data-lang-key="register">Register</a>
+            {% endif %}
             </div>
 
         

@@ -310,16 +310,11 @@ a h5 {
     font-size: 14px;
     color: lightcoral;
 }
-a p:hover {
-    transform: translateX(50px) 1s;
+.searchResult:hover {
+    transform: translateX(10px);
+    transition: transform 0.2s;
 }
 
-a h2:hover {
-    font-size: 101%
-}
-a h5:hover {
-    font-size: 101%
-}
 
 .image-results {
     display: flex;

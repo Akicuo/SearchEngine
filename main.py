@@ -55,6 +55,9 @@ app.secret_key = app.secret_key = os.urandom(16)
 def get_random_uuid() -> str:
     return str(uuid.uuid4())
 
+@app.errorhandler(404)
+def handle_not_found(e):
+    return render_template("PageNotFound.html"), 404
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -67,7 +70,7 @@ def index():
 
 
 @app.route("/auth", methods=["GET", "POST"])
-def login():
+def auth():
     if request.method == "POST":
         if request.form.get("email"):
             username = request.form.get("username")
@@ -119,8 +122,15 @@ def login():
             except Exception as e:
                 print("Error: " + str(e))
 
-
-    return render_template("Login.html", current_user=session)
+    if "skipTo" in request.args:
+        if request.args.get("skipTo") == "register":
+            return render_template("register.html", current_user=session)
+        elif request.args.get("skipTo") == "login":
+            return render_template("login.html", current_user=session)
+        else:
+            return jsonify({"error": "Invalid skipTo parameter"}), 400
+    else:
+        return render_template("Login.html", current_user=session)
 
 
 @app.route("/logout")
