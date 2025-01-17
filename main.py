@@ -26,16 +26,33 @@ import uuid
 from models.file import read_content
 load_dotenv()
 
-app = Flask(__name__)
-app.secret_key = "2024-BLJ-Projekt"
+NOVITA_API_KEY = os.getenv("NOVITA_API_KEY")
+SERPER_DEV_API_KEY = os.getenv("SERPER_API_KEY")
+SUPABASE_API_KEY = os.getenv("SUPABASE_API_KEY")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
 
-SAE = SearchAgentEngine(API_Key="LAYLAN-01i2mdabdj3929dk2lem2l2cd1f4762e84d")
-default_pfp = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/768px-Default_pfp.svg.png"
+if NOVITA_API_KEY is None or SERPER_DEV_API_KEY is None or SUPABASE_API_KEY is None or SUPABASE_URL is None:
+    print("API keys not found in environment variables. Please check your .env file or create it.")
+    if ".env" not in os.listdir():
+        with open(".env", "w") as f:
 
-key = os.getenv("OPENAI_API_KEY")
+            f.write(f"NOVITA_API_KEY={os.getenv('NOVITA_API_KEY', 'x'*25)}\n")
+            f.write(f"SERPER_API_KEY={os.getenv('SERPER_API_KEY', 'x'*25)}\n")
+            f.write(f"SUPABASE_API_KEY={os.getenv('SUPABASE_API_KEY', 'x'*25)}\n")
+            f.write(f"SUPABASE_URL={os.getenv('SUPABASE_URL', 'x'*25)}\n")
+    else:
+        print("Please add the API keys to your .env file.")
+else:
+    print("API keys loaded successfully.")
+
 
 SYSTEM_PROMPT= read_content("prompts/system.txt")
 USER_PROMPT = read_content("prompts/user.txt")
+
+
+app = Flask(__name__)
+app.secret_key = app.secret_key = os.urandom(16)
+
 
 
 def get_random_uuid() -> str:
@@ -49,9 +66,12 @@ def index():
     session.setdefault("is_authenticated", False)
     session.setdefault("isProUser", False)
     session.setdefault("id", 0)
-    session.setdefault("id", "")
-    session.setdefault("img", default_pfp)
+    # , current_user=session, current_page="home", title="Home
+    return render_template("homesearch.html")
 
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
     if request.method == "POST":
         if request.form.get("email"):
             username = request.form.get("username")
@@ -103,8 +123,8 @@ def index():
             except Exception as e:
                 print("Error: " + str(e))
 
-    return render_template("index.html", current_user=session, current_page="home", title="Home")
 
+    return render_template("Login.html", current_user=session)
 @app.route("/logout")
 def logout():
     try:
@@ -126,6 +146,8 @@ def history():
                            current_user=session, 
                            server_saved_searches=server_saved_searches,
                            current_page="history", title="History")
+
+
 # threads list var example: [{"title": "unicorn", "created_at": "18:47:00 22-12-2024"}]
 @app.route("/threads", methods=["GET"])
 def threads():
@@ -138,6 +160,8 @@ def threads():
 def thread():
     thread_id = request.args.get("id")
     pass
+
+
 @app.route("/profile", methods=["GET"])
 def profile():
     return render_template("profile.html", 
@@ -149,7 +173,6 @@ def profile():
 @app.route("/search", methods=["GET"])
 def search():
     global key, SYSTEM_PROMPT, USER_PROMPT
-    
     query = request.args.get("q")
     search_results = SAE.Search(query=query)
 

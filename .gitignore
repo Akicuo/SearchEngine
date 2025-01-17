@@ -1,2 +1,5 @@
 se/
 *.env
+VirtualEnv
+venv
+env

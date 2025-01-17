@@ -9,7 +9,7 @@ client = OpenAI(
 def stream(api_key:str, system_prompt:str,query:str):
     global client
     client.api_key = api_key
-    model = "meta-llama/llama-3.1-405b-instruct"
+    model = "meta-llama/llama-3.1-70b-instruct"
     stream = True
     max_tokens = 8048
 
