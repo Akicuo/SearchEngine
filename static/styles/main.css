@@ -308,10 +308,10 @@ a h2 {
 }
 a h5 {
     font-size: 14px;
-    color: aqua;
+    color: lightcoral;
 }
 a p:hover {
-    font-size: 101%
+    transform: translateX(50px) 1s;
 }
 
 a h2:hover {
@@ -319,4 +319,20 @@ a h2:hover {
 }
 a h5:hover {
     font-size: 101%
+}
+
+.image-results {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.ImgResult {
+    height: 150px;
+    margin-right: 20px;
+}
+.ImgResult:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
 }

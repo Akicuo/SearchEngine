@@ -5,12 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function fetchSearchResults(category = '') {
 
         const query = searchInput.value.trim();
-        
-        // Don't perform empty searches
-        if (!query) {
-            searchResults.innerHTML = '<p>Please enter a search term</p>';
-            return;
-        }
+
 
         // Construct the URL with query and category parameters
         const url = `/api/serper?q=${encodeURIComponent(query)}${category ? `&cat=${encodeURIComponent(category)}` : ''}`;
@@ -37,35 +32,48 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Search results:', data);
             searchResults.innerHTML = '';
             
-            if (!data.organic || data.organic.length === 0) {
-                searchResults.innerHTML = '<p>No results found</p>';
+            if (data.organic) {
+                document.querySelector('.searchResults').classList.toggle('image-results', false);
+                data.organic.forEach(item => {
+                    const result = document.createElement('a');
+                    result.className = "searchResult";
+                    result.href = item.link;
+                    result.target = "_blank";
+                    result.rel = "noopener noreferrer"; // Security best practice for _blank links
+    
+                    const title = document.createElement('h2');
+                    title.className = "searchResultTitle";
+                    title.textContent = item.title;
+    
+                    const link = document.createElement('h5');
+                    link.className = "searchResultLink";
+                    link.textContent = item.link;
+    
+                    const snippet = document.createElement('p');
+                    snippet.className = "searchResultContent";
+                    snippet.textContent = item.snippet;
+    
+                    result.appendChild(title);
+                    result.appendChild(link);
+                    result.appendChild(snippet);
+                    searchResults.appendChild(result);
+                });
+            }
+            else if (data.images) {
+                data.images.forEach(item => {
+                    document.querySelector('.searchResults').classList.toggle('image-results', true);
+                    const result = document.createElement('img');
+                    result.src = item.imageUrl;
+                    result.alt = item.title || 'Image';
+                    result.className = "ImgResult";
+                    searchResults.appendChild(result);
+                });
+            } else if (!data.organic || data.organic.length === 0) {
+                searchResults.innerHTML = '<p>No results found for your search.</p>';
                 return;
             }
-
-            data.organic.forEach(item => {
-                const result = document.createElement('a');
-                result.className = "searchResult";
-                result.href = item.link;
-                result.target = "_blank";
-                result.rel = "noopener noreferrer"; // Security best practice for _blank links
-
-                const title = document.createElement('h2');
-                title.className = "searchResultTitle";
-                title.textContent = item.title;
-
-                const link = document.createElement('h5');
-                link.className = "searchResultLink";
-                link.textContent = item.link;
-
-                const snippet = document.createElement('p');
-                snippet.className = "searchResultContent";
-                snippet.textContent = item.snippet;
-
-                result.appendChild(title);
-                result.appendChild(link);
-                result.appendChild(snippet);
-                searchResults.appendChild(result);
-            });
+            
+            
         })
         .catch(error => {
             console.error('Error:', error);
