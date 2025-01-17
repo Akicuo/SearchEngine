@@ -62,12 +62,11 @@ def index():
     session.setdefault("username", None)
     session.setdefault("is_authenticated", False)
     session.setdefault("isProUser", False)
-    session.setdefault("id", 0)
     # , current_user=session, current_page="home", title="Home
-    return render_template("homesearch.html")
+    return render_template("homesearch.html", session=session)
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/auth", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         if request.form.get("email"):
@@ -122,6 +121,8 @@ def login():
 
 
     return render_template("Login.html", current_user=session)
+
+
 @app.route("/logout")
 def logout():
     try:
@@ -144,6 +145,10 @@ def history():
                            server_saved_searches=server_saved_searches,
                            current_page="history", title="History")
 
+
+@app.route("/forgot_password", methods=["GET"])
+def forgot_password():
+    return render_template("forgot_password.html", current_user=session)
 
 # threads list var example: [{"title": "unicorn", "created_at": "18:47:00 22-12-2024"}]
 @app.route("/threads", methods=["GET"])

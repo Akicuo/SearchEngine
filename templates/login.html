@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=3.0">
     <meta name="description" content="Seai 2.0">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/authForms.css') }}">
 </head>
 <body>
     <!-- Header -->
@@ -34,13 +36,26 @@
         </div>
     </header>
 
-    <div class="search-container">
-        <div class="logo" style="font-size: 48px; margin-bottom: 20px;">Seai 2.0</div>
-        <form id="searchForm">
-            <input type="text" class="search-input" id="searchInput" placeholder="Search...">
-            <button type="submit" class="search-button" id="searchButton" data-lang-key="search">Search</button>
+    <div class="auth-container">
+        <form action="{{ url_for('login') }}" method="post">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="login-button">Login</button>
+                <a href="{{ url_for('index') }}" class="back-button">Back</a>
+            </div>
+            <div class="forgot-link">
+                <a href="{{ url_for('forgot_password') }}">Forgot password or username?</a>
+            </div>
         </form>
     </div>
+    
     
  
     
@@ -49,7 +64,7 @@
 
     <script src="{{ url_for('static',filename='scripts/translate.js') }}"></script>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}" integrity="{{ url_for('static', filename='styles/main.css', _external=True) }}" crossorigin="anonymous">
+    
 
 
 </body>

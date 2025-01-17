@@ -1,7 +1,8 @@
 const translations = {
     en: {
-    search: 'Search',
+        search: 'Search',
         home: 'Home',
+        logout: 'Log out',
         imageLens: 'Image Lens',
         costs: 'Pricing',
         contact: 'Contact',
@@ -14,6 +15,7 @@ const translations = {
     de: {
         search: 'Suchen',
         home: 'Startseite',
+        logout: 'Abmelden',
         imageLens: 'Bild-Suche',
         costs: 'Kosten',
         contact: 'Kontakt',
