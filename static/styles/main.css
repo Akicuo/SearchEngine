@@ -331,3 +331,19 @@ a h5 {
     transform: scale(1.1);
     box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
 }
+
+@media (max-width: 768px) {
+    .searchTypes {
+        position: relative;
+        flex-direction: column;
+        align-items: end;
+        top: 260px;
+        right: 20px;
+        
+        
+
+    }
+    #searchInput {
+        width: 50%;
+    }
+}

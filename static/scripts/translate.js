@@ -10,7 +10,12 @@ const translations = {
         register: 'Register',
         searchPlaceholder: 'Search...',
         imageLensTitle: 'Image Lens',
-        imageLensDescription: 'Upload an image for advanced search'
+        imageLensDescription: 'Upload an image for advanced search',
+        SearchTypeMaps: 'Maps',
+        SearchTypeVideos: 'Videos',
+        SearchTypeNews: 'News',
+        SearchTypeImages: 'Images',
+        SearchTypeAll: 'All'
     },
     de: {
         search: 'Suchen',
@@ -23,7 +28,12 @@ const translations = {
         register: 'Registrieren',
         searchPlaceholder: 'Suchen...',
         imageLensTitle: 'Bild-Suche',
-        imageLensDescription: 'Laden Sie ein Bild für die erweiterte Suche hoch'
+        imageLensDescription: 'Laden Sie ein Bild für die erweiterte Suche hoch',
+        SearchTypeMaps: 'Karten',
+        SearchTypeVideos: 'Videos',
+        SearchTypeNews: 'Nachrichten',
+        SearchTypeImages: 'Bilder',
+        SearchTypeAll: 'Alles'
     }
 };
 

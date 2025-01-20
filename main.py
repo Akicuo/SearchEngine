@@ -13,18 +13,55 @@ from flask import (
 import json, time
 from datetime import datetime
 from models.serper import Serper
-from models.SearchAI import stream
 import os
-import models.sql_model as sql_model
+from models.mysql import db as mysql
 import hashlib
 import requests
 import json
-from dotenv import (load_dotenv, dotenv_values)
 import regex as re
 import uuid
-from models.file import read_content
+from openai import OpenAI
 
+client = OpenAI(
+    base_url="https://api.novita.ai/v3/openai"
+)
+def stream(api_key:str, system_prompt:str,query:str):
+    global client
+    client.api_key = api_key
 
+    chat_completion_res = client.chat.completions.create(
+        model="meta-llama/llama-3.1-70b-instruct",
+        messages=[
+            {
+                "role": "system",
+                "content": system_prompt,
+            },
+            {
+                "role": "user",
+                "content": query,
+            }
+        ],
+        stream=True,
+        max_tokens=8048,
+    )
+
+    if stream:
+        for chunk in chat_completion_res:
+            yield chunk.choices[0].delta.content or ""
+    else:
+        # Currently set to return this
+        return chat_completion_res.choices[0].message.content
+
+def read_content(file_path):
+    try:
+        with open(file_path, "r") as file:
+            content = file.read()
+            return content
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        exit(0)
+
+bit_to_bool = lambda bit: True if bit == 1 else False
 
 config: dict = {}
 with open("config.json", "r") as f:
@@ -34,10 +71,8 @@ with open("config.json", "r") as f:
 
 NOVITA_API_KEY = config["NOVITA_API_KEY"]
 SERPER_DEV_API_KEY = config["SERPER_DEV_API_KEY"]
-SUPABASE_API_KEY = config["SUPABASE_API_KEY"]
-SUPABASE_URL = config["SUPABASE_URL"]
 
-
+mysql = mysql(host=config["DB_HOST_URL"], user=config["DB_USER"], password=config["DB_PASSWORD"], database="d041e_seai")
 
 try:
     SYSTEM_PROMPT= read_content("prompts/system.txt")
@@ -53,6 +88,7 @@ app.secret_key = app.secret_key = os.urandom(16)
 
 def get_random_uuid() -> str:
     return str(uuid.uuid4())
+
 
 @app.errorhandler(404)
 def handle_not_found(e):
@@ -79,17 +115,17 @@ def auth():
             if password != confirm_password:
                 session["liu"] = "Passwords do not match"
                 return render_template("index.html", current_user=session)
-            if sql_model.check_user_exists(username, email):
+            if mysql.check_user_exists(username, email):
                 print("User already exists", "error")
                 return render_template("index.html", current_user=session)
 
             try:
-                cursor = sql_model.connection.cursor()
+                cursor = mysql.connection.cursor()
                 query = (
                     "INSERT INTO users (username, email, password, uuid) VALUES (%s, %s, %s, %s)"
                 )
                 cursor.execute(query, (username, email, hashed_password, get_random_uuid()))
-                sql_model.connection.commit()
+                mysql.connection.commit()
                 print("Registration successful! You can now log in.", "success")
                 session["user"] = True
                 return redirect(url_for("index"))
@@ -102,7 +138,7 @@ def auth():
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
             try:
-                cursor = sql_model.connection.cursor(dictionary=True)
+                cursor = mysql.connection.cursor(dictionary=True)
                 query = "SELECT * FROM users WHERE username = %s AND password = %s"
                 cursor.execute(query, (username, hashed_password))
 
@@ -121,9 +157,9 @@ def auth():
             
 
     if "skipTo" in request.args:
-        if request.args.get("skipTo") == "register":
+        if request.args.get("skipTo").lower() == "register":
             return render_template("register.html", current_user=session)
-        elif request.args.get("skipTo") == "login":
+        elif request.args.get("skipTo").lower() == "login":
             return render_template("login.html", current_user=session)
         else:
             return jsonify({"error": "Invalid skipTo parameter"}), 400
@@ -146,48 +182,38 @@ def logout():
 def history():
     server_saved_searches = []
     
-    if sql_model.id_valid(session_id=session["id"]):
-        server_saved_searches = sql_model.get_all_searches(session_id=session["id"])
+    if mysql.id_valid(session_id=session["id"]):
+        server_saved_searches = mysql.get_all_searches(session_id=session["id"])
     return render_template("history.html", 
                            current_user=session, 
                            server_saved_searches=server_saved_searches,
                            current_page="history", title="History")
 
 
-@app.route("/forgot_password", methods=["GET"])
-def forgot_password():
-    return render_template("forgot_password.html", current_user=session)
-
-# threads list var example: [{"title": "unicorn", "created_at": "18:47:00 22-12-2024"}]
-@app.route("/threads", methods=["GET"])
-def threads():
-    return render_template("threads.html", 
-                           current_user=session, 
-                           threads=sql_model.get_all_threads(session["id"]),
-                           current_page="threads", title="Threads")
-
-@app.route("/thread", methods=["GET"])
-def thread():
-    thread_id = request.args.get("id")
-    pass
-
-
 @app.route("/profile", methods=["GET"])
 def profile():
     return render_template("profile.html", 
                            current_user=session, 
-                           wuf=sql_model.FindOutTimeOfCreation(session["id"]),
-                           email=sql_model.FindEmail(session["id"]),
+                           wuf=mysql.FindOutTimeOfCreation(session["id"]),
+                           email=mysql.FindEmail(session["id"]),
                            current_page="profile", title="Profile")
 
 @app.route("/search", methods=["GET"])
 def search():
     global key, SYSTEM_PROMPT, USER_PROMPT
-    query = request.args.get("q")
-
+    query = request.args.get("q") # users input
+    page = int(request.args.get("p", "1"))
+    llm = bit_to_bool(int(request.args.get("llm", "1")))
+    knowledgeGraph = bit_to_bool(int(request.args.get("kgraph", "1")))
+    search_offset = (page - 1) * 10
     return render_template(
         "search.html",
-        query=query
+        query=query,
+        page=page,
+        llm=llm,
+        kgraph=knowledgeGraph,
+        current_user=session,
+        search_offset=search_offset,
     )
 
 
@@ -203,26 +229,14 @@ def api_serper_search():
         return jsonify(serper.search_news(query=query))
     elif "discover" == cat:
         return jsonify(serper.search_discover(query=query))
+    elif "videos" == cat:
+        return jsonify(serper.search_videos(query=query))
     else:
         return jsonify({"error": "Invalid category"}), 400
         
     
 
 
-@app.route("/api/threads/create", methods=["POST"])
-def api_create_threads():
-    user_uuid = request.args.get("arg_uuid")
-    originated_search = request.args.get("originated_search")
-    assistant_message = request.args.get("assistant_message")
-    thread_title = request.args.get("thread_title")
-    
-    pass
-
-@app.route("/api/threads/remove", methods=["POST"])
-def api_remove_threads():
-    user_uuid = request.args.get("arg_uuid")
-    thread_id = request.args.get("thread_id")
-    pass
 
 @app.route("/api/response", methods=["GET"])
 def api_response():
@@ -234,19 +248,19 @@ def api_response():
         return jsonify({"error": "Missing Parameters"}), 400
 
     # Validate user credentials
-    cursor = sql_model.connection.cursor(dictionary=True)
+    cursor = mysql.connection.cursor(dictionary=True)
     query_check = "SELECT * FROM users WHERE username = %s AND uuid = %s"
     cursor.execute(query_check, (username, arg_uuid))
     fetched_user = cursor.fetchone()
 
     if not fetched_user:
         return jsonify({"error": "Invalid username or arg_uuid"}), 401
-    if sql_model.FindOutSubscriptionType(session["id"]) != "Premium":
+    if mysql.FindOutSubscriptionType(session["id"]) != "Premium":
         return jsonify({"error": "User  is not premium"}), 403
 
     @stream_with_context
     def generate_response():
-        search_results = SAE.Search(query=query)
+        search_results = stream(query=query)
         
         process_wr = ""
         for result in search_results.get("organic", []):
@@ -262,19 +276,6 @@ def api_response():
 
     return Response(generate_response(), mimetype='text/plain')
 
-@app.route("/api/thread-message", methods=["POST"])
-def api_threadMessage():
-    role = request.args.get("role")
-    if role not in ["assistant", "user"] or role is None:
-        return jsonify({"error": "Invalid role"}), 400
-    message = request.args.get("message")
-    if message is None:
-        return jsonify({"error": "Missing message"}), 400
-    user_uuid = request.args.get("arg_uuid")
-    if user_uuid is None or user_uuid not in sql_model.get_all_uuids(): # Create this function later in sql_model file
-        return jsonify({"error": "Invalid UUID"}), 400
-    sql_model.save_message_to_thread(user_uuid, role, message)  # Create this function later in sql_model file
-    
         
 
 
