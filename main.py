@@ -192,24 +192,6 @@ def history():
                            current_page="history", title="History")
 
 
-@app.route("/forgot_password", methods=["GET"])
-def forgot_password():
-    return render_template("forgot_password.html", current_user=session)
-
-# threads list var example: [{"title": "unicorn", "created_at": "18:47:00 22-12-2024"}]
-@app.route("/threads", methods=["GET"])
-def threads():
-    return render_template("threads.html", 
-                           current_user=session, 
-                           threads=mysql.get_all_threads(session["id"]),
-                           current_page="threads", title="Threads")
-
-@app.route("/thread", methods=["GET"])
-def thread():
-    thread_id = request.args.get("id")
-    pass
-
-
 @app.route("/profile", methods=["GET"])
 def profile():
     return render_template("profile.html", 
