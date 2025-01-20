@@ -14,11 +14,10 @@ import json, time
 from datetime import datetime
 from models.serper import Serper
 import os
-import models.mysql as mysql
+from models.mysql import db as mysql
 import hashlib
 import requests
 import json
-from dotenv import (load_dotenv, dotenv_values)
 import regex as re
 import uuid
 from openai import OpenAI
@@ -72,10 +71,8 @@ with open("config.json", "r") as f:
 
 NOVITA_API_KEY = config["NOVITA_API_KEY"]
 SERPER_DEV_API_KEY = config["SERPER_DEV_API_KEY"]
-SUPABASE_API_KEY = config["SUPABASE_API_KEY"]
-SUPABASE_URL = config["SUPABASE_URL"]
 
-
+mysql = mysql(host=config["DB_HOST_URL"], user=config["DB_USER"], password=config["DB_PASSWORD"], database="d041e_seai")
 
 try:
     SYSTEM_PROMPT= read_content("prompts/system.txt")
