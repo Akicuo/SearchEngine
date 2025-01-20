@@ -8,6 +8,11 @@
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
+    <div style="display: none;">
+        <p id="llm"> {{ llm }}</p>
+        <p id="knowledgeGraph"> {{ kgraph }}</p>
+        <p id="searchOffset"> {{ search_offset }}</p>
+    </div>
     <!-- Header -->
     <header class="header">
         <a href="#" class="logo">Seai 2.0</a>

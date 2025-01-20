@@ -10,12 +10,12 @@ class Serper:
         'Content-Type': 'application/json'
         }
 
-    def search_images(self, query, num_results=10):
+    def search_images(self, query, num_results=50):
         url = f"{self.base_url}/images"
         try:
             payload = json.dumps({
             "q": query,
-            "num": 100
+            "num": num_results
             })
             response = requests.post(url, headers=self.headers, data=payload)
             
@@ -29,7 +29,7 @@ class Serper:
         try:
             payload = json.dumps({
             "q": query,
-            "num": 100
+            "num": num_results
             })
             response = requests.post(url, headers=self.headers, data=payload)
             return json.loads(response.text)
@@ -37,12 +37,23 @@ class Serper:
             return {"error": str(e)}
         
     def search_news(self, query, num_results=10):
-        url = f"{self.base_url}/search"
+        url = f"{self.base_url}/news"
         try:
             payload = json.dumps({
             "q": query,
-            "num": 100
+            "num": num_results,
             })
+            response = requests.post(url, headers=self.headers, data=payload)
+            return json.loads(response.text)
+        except requests.exceptions.RequestException as e:
+            return {"error": str(e)}
+    def search_news(self, query, num_results=10):
+        url = f"{self.base_url}/videos"
+        try:
+            payload = json.dumps({
+            "q": query,
+            "num": num_results,
+            })  
             response = requests.post(url, headers=self.headers, data=payload)
             return json.loads(response.text)
         except requests.exceptions.RequestException as e:

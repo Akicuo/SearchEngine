@@ -62,7 +62,7 @@ def read_content(file_path):
         print(f"An error occurred: {e}")
         exit(0)
 
-
+bit_to_bool = lambda bit: True if bit == 1 else False
 
 config: dict = {}
 with open("config.json", "r") as f:
@@ -221,11 +221,19 @@ def profile():
 @app.route("/search", methods=["GET"])
 def search():
     global key, SYSTEM_PROMPT, USER_PROMPT
-    query = request.args.get("q")
-
+    query = request.args.get("q") # users input
+    page = int(request.args.get("p", "1"))
+    llm = bit_to_bool(int(request.args.get("llm", "1")))
+    knowledgeGraph = bit_to_bool(int(request.args.get("kgraph", "1")))
+    search_offset = (page - 1) * 10
     return render_template(
         "search.html",
-        query=query
+        query=query,
+        page=page,
+        llm=llm,
+        kgraph=knowledgeGraph,
+        current_user=session,
+        search_offset=search_offset,
     )
 
 
@@ -241,26 +249,14 @@ def api_serper_search():
         return jsonify(serper.search_news(query=query))
     elif "discover" == cat:
         return jsonify(serper.search_discover(query=query))
+    elif "videos" == cat:
+        return jsonify(serper.search_videos(query=query))
     else:
         return jsonify({"error": "Invalid category"}), 400
         
     
 
 
-@app.route("/api/threads/create", methods=["POST"])
-def api_create_threads():
-    user_uuid = request.args.get("arg_uuid")
-    originated_search = request.args.get("originated_search")
-    assistant_message = request.args.get("assistant_message")
-    thread_title = request.args.get("thread_title")
-    
-    pass
-
-@app.route("/api/threads/remove", methods=["POST"])
-def api_remove_threads():
-    user_uuid = request.args.get("arg_uuid")
-    thread_id = request.args.get("thread_id")
-    pass
 
 @app.route("/api/response", methods=["GET"])
 def api_response():
@@ -284,7 +280,7 @@ def api_response():
 
     @stream_with_context
     def generate_response():
-        search_results = SAE.Search(query=query)
+        search_results = stream(query=query)
         
         process_wr = ""
         for result in search_results.get("organic", []):
@@ -300,19 +296,6 @@ def api_response():
 
     return Response(generate_response(), mimetype='text/plain')
 
-@app.route("/api/thread-message", methods=["POST"])
-def api_threadMessage():
-    role = request.args.get("role")
-    if role not in ["assistant", "user"] or role is None:
-        return jsonify({"error": "Invalid role"}), 400
-    message = request.args.get("message")
-    if message is None:
-        return jsonify({"error": "Missing message"}), 400
-    user_uuid = request.args.get("arg_uuid")
-    if user_uuid is None or user_uuid not in mysql.get_all_uuids(): # Create this function later in sql_model file
-        return jsonify({"error": "Invalid UUID"}), 400
-    mysql.save_message_to_thread(user_uuid, role, message)  # Create this function later in sql_model file
-    
         
 
 
