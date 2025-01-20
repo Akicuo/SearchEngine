@@ -315,6 +315,27 @@ a h5 {
     transition: transform 0.2s;
 }
 
+.searchResult{
+    max-width: 65%;
+}
+#searchInput {
+    width: 35%;
+}
+
+.searchResult {
+    max-width: 70%;
+}
+
+.searchResult h2 {
+    max-width: 70%;
+    font-size: 1.2rem;
+}
+
+.searchResult h5 {
+    max-width: 70%;
+    font-size: 14px;
+    color: lightcoral;
+}
 
 .image-results {
     display: flex;
@@ -324,7 +345,7 @@ a h5 {
 }
 
 .ImgResult {
-    height: 150px;
+    height: 180px;
     margin-right: 20px;
 }
 .ImgResult:hover {
@@ -337,7 +358,7 @@ a h5 {
         position: relative;
         flex-direction: column;
         align-items: end;
-        top: 260px;
+        top: 120px;
         right: 20px;
         
         

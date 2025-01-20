@@ -22,35 +22,7 @@ import regex as re
 import uuid
 from openai import OpenAI
 
-client = OpenAI(
-    base_url="https://api.novita.ai/v3/openai"
-)
-def stream(api_key:str, system_prompt:str,query:str):
-    global client
-    client.api_key = api_key
 
-    chat_completion_res = client.chat.completions.create(
-        model="meta-llama/llama-3.1-70b-instruct",
-        messages=[
-            {
-                "role": "system",
-                "content": system_prompt,
-            },
-            {
-                "role": "user",
-                "content": query,
-            }
-        ],
-        stream=True,
-        max_tokens=8048,
-    )
-
-    if stream:
-        for chunk in chat_completion_res:
-            yield chunk.choices[0].delta.content or ""
-    else:
-        # Currently set to return this
-        return chat_completion_res.choices[0].message.content
 
 def read_content(file_path):
     try:
@@ -223,11 +195,11 @@ def search():
 def api_serper_search():
     cat = request.args.get("cat", "discover").lower()
     query = request.args.get("q")
-    if "images" == cat:
+    if  "images" == cat :
         return jsonify(serper.search_images(query=query))
     elif "news" == cat:
         return jsonify(serper.search_news(query=query))
-    elif "discover" == cat:
+    elif  cat.lower() in ["discover", "all"]:
         return jsonify(serper.search_discover(query=query))
     elif "videos" == cat:
         return jsonify(serper.search_videos(query=query))
