@@ -16,6 +16,13 @@
     <!-- Header -->
     <header class="header">
         <a href="#" class="logo">Seai 2.0</a>
+        
+        <!-- Mobile Menu Toggle Button -->
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
         <nav class="nav-links">
             <a href="/" data-lang-key="home">Home</a>
             <a href="/pricing" data-lang-key="costs">Pricing</a>
@@ -28,39 +35,38 @@
                     <option value="de">🇩🇪 Deutsch (German)</option>
                 </select>
             </div>
-        </nav>
-        
-        <div>
             <div class="auth-links">
                 {% if session.get('user') %}
-                <a href="{{ url_for('logout') }}" data-lang-key="logout">Logout</a>
-            {% else %}
-                <a href="/auth?skipTo=Login" data-lang-key="login">Login</a>
-                <a href="/auth?skipTo=Register" data-lang-key="register">Register</a>
-            {% endif %}
+                    <a href="{{ url_for('logout') }}" data-lang-key="logout">Logout</a>
+                {% else %}
+                    <a href="/auth?skipTo=login" data-lang-key="login">Login</a>
+                    <a href="/auth?skipTo=register" data-lang-key="register">Register</a>
+                {% endif %}
             </div>
-
+        </nav>
         
     </header>
+
+
     <div class="searchNav">
         <form id="searchForm col">
             <input type="text" class="search-input" id="searchInput" value="{{ query }}">
             <button type="submit" class="search-button" id="searchButton" data-lang-key="search" >Search</button>
         </form>
         <div class="searchTypes">
-            <a class="WebSearchCatag active" href="/search?cat=discover">
+            <a class="WebSearchCatag active" href="/search?cat=discover" data-lang-key="SearchTypeAll">
                 Discover 
             <a>
-            <a class="WebSearchCatag" href="/search?cat=images">
+            <a class="WebSearchCatag" href="/search?cat=images" data-lang-key="SearchTypeImages">
                 Images 
             <a>
-            <a class="WebSearchCatag" href="/search?cat=news">
+            <a class="WebSearchCatag" href="/search?cat=news" data-lang-key="SearchTypeNews">
                 News 
             <a>
-            <a class="WebSearchCatag" href="/search?cat=videos">
+            <a class="WebSearchCatag" href="/search?cat=videos" data-lang-key="SearchTypeVideos">
                 Videos 
             <a>
-            <a class="WebSearchCatag" href="/search?cat=maps">
+            <a class="WebSearchCatag" href="/search?cat=maps" data-lang-key="SearchTypeMaps">
                 Maps 
             <a>
         </div>
@@ -108,10 +114,17 @@
     
     
     
-    <script src="{{ url_for('static',filename='scripts/search.js') }}"></script>
-    <script src="{{ url_for('static',filename='scripts/serper.js') }}"></script>
-    <script src="{{ url_for('static',filename='scripts/translate.js') }}"></script>
+    <script src="/static/scripts/search.js"></script>
+    <script src="/static/scripts/serper.js"></script>
+    <script src="/static/scripts/translate.js"></script>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}" integrity="{{ url_for('static', filename='styles/main.css', _external=True) }}" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/styles/main.css">
+    <link rel="stylesheet" href="/static/styles/header.css">
+    <script>
+        document.querySelector('.hamburger').addEventListener('click', function() {
+            this.classList.toggle('active');
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
