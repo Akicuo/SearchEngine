@@ -13,16 +13,54 @@ from flask import (
 import json, time
 from datetime import datetime
 from models.serper import Serper
-from models.SearchAI import stream
 import os
-import models.sql_model as sql_model
+import models.mysql as mysql
 import hashlib
 import requests
 import json
 from dotenv import (load_dotenv, dotenv_values)
 import regex as re
 import uuid
-from models.file import read_content
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.novita.ai/v3/openai"
+)
+def stream(api_key:str, system_prompt:str,query:str):
+    global client
+    client.api_key = api_key
+
+    chat_completion_res = client.chat.completions.create(
+        model="meta-llama/llama-3.1-70b-instruct",
+        messages=[
+            {
+                "role": "system",
+                "content": system_prompt,
+            },
+            {
+                "role": "user",
+                "content": query,
+            }
+        ],
+        stream=True,
+        max_tokens=8048,
+    )
+
+    if stream:
+        for chunk in chat_completion_res:
+            yield chunk.choices[0].delta.content or ""
+    else:
+        # Currently set to return this
+        return chat_completion_res.choices[0].message.content
+
+def read_content(file_path):
+    try:
+        with open(file_path, "r") as file:
+            content = file.read()
+            return content
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        exit(0)
 
 
 
@@ -79,17 +117,17 @@ def auth():
             if password != confirm_password:
                 session["liu"] = "Passwords do not match"
                 return render_template("index.html", current_user=session)
-            if sql_model.check_user_exists(username, email):
+            if mysql.check_user_exists(username, email):
                 print("User already exists", "error")
                 return render_template("index.html", current_user=session)
 
             try:
-                cursor = sql_model.connection.cursor()
+                cursor = mysql.connection.cursor()
                 query = (
                     "INSERT INTO users (username, email, password, uuid) VALUES (%s, %s, %s, %s)"
                 )
                 cursor.execute(query, (username, email, hashed_password, get_random_uuid()))
-                sql_model.connection.commit()
+                mysql.connection.commit()
                 print("Registration successful! You can now log in.", "success")
                 session["user"] = True
                 return redirect(url_for("index"))
@@ -102,7 +140,7 @@ def auth():
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
             try:
-                cursor = sql_model.connection.cursor(dictionary=True)
+                cursor = mysql.connection.cursor(dictionary=True)
                 query = "SELECT * FROM users WHERE username = %s AND password = %s"
                 cursor.execute(query, (username, hashed_password))
 
@@ -146,8 +184,8 @@ def logout():
 def history():
     server_saved_searches = []
     
-    if sql_model.id_valid(session_id=session["id"]):
-        server_saved_searches = sql_model.get_all_searches(session_id=session["id"])
+    if mysql.id_valid(session_id=session["id"]):
+        server_saved_searches = mysql.get_all_searches(session_id=session["id"])
     return render_template("history.html", 
                            current_user=session, 
                            server_saved_searches=server_saved_searches,
@@ -163,7 +201,7 @@ def forgot_password():
 def threads():
     return render_template("threads.html", 
                            current_user=session, 
-                           threads=sql_model.get_all_threads(session["id"]),
+                           threads=mysql.get_all_threads(session["id"]),
                            current_page="threads", title="Threads")
 
 @app.route("/thread", methods=["GET"])
@@ -176,8 +214,8 @@ def thread():
 def profile():
     return render_template("profile.html", 
                            current_user=session, 
-                           wuf=sql_model.FindOutTimeOfCreation(session["id"]),
-                           email=sql_model.FindEmail(session["id"]),
+                           wuf=mysql.FindOutTimeOfCreation(session["id"]),
+                           email=mysql.FindEmail(session["id"]),
                            current_page="profile", title="Profile")
 
 @app.route("/search", methods=["GET"])
@@ -234,14 +272,14 @@ def api_response():
         return jsonify({"error": "Missing Parameters"}), 400
 
     # Validate user credentials
-    cursor = sql_model.connection.cursor(dictionary=True)
+    cursor = mysql.connection.cursor(dictionary=True)
     query_check = "SELECT * FROM users WHERE username = %s AND uuid = %s"
     cursor.execute(query_check, (username, arg_uuid))
     fetched_user = cursor.fetchone()
 
     if not fetched_user:
         return jsonify({"error": "Invalid username or arg_uuid"}), 401
-    if sql_model.FindOutSubscriptionType(session["id"]) != "Premium":
+    if mysql.FindOutSubscriptionType(session["id"]) != "Premium":
         return jsonify({"error": "User  is not premium"}), 403
 
     @stream_with_context
@@ -271,9 +309,9 @@ def api_threadMessage():
     if message is None:
         return jsonify({"error": "Missing message"}), 400
     user_uuid = request.args.get("arg_uuid")
-    if user_uuid is None or user_uuid not in sql_model.get_all_uuids(): # Create this function later in sql_model file
+    if user_uuid is None or user_uuid not in mysql.get_all_uuids(): # Create this function later in sql_model file
         return jsonify({"error": "Invalid UUID"}), 400
-    sql_model.save_message_to_thread(user_uuid, role, message)  # Create this function later in sql_model file
+    mysql.save_message_to_thread(user_uuid, role, message)  # Create this function later in sql_model file
     
         
 
