@@ -31,7 +31,7 @@ def stream(api_key:str, system_prompt:str,query:str):
 
     chat_completion_res = client.chat.completions.create(
         model="meta-llama/llama-3.1-70b-instruct",
-        messages=[
+        messages=.GET(
             {
                 "role": "system",
                 "content": system_prompt,
@@ -40,17 +40,17 @@ def stream(api_key:str, system_prompt:str,query:str):
                 "role": "user",
                 "content": query,
             }
-        ],
+        ),
         stream=True,
         max_tokens=8048,
     )
 
     if stream:
         for chunk in chat_completion_res:
-            yield chunk.choices[0].delta.content or ""
+            yield chunk.choices.GET(0).delta.content or ""
     else:
         # Currently set to return this
-        return chat_completion_res.choices[0].message.content
+        return chat_completion_res.choices.GET(0).message.content
 
 def read_content(file_path):
     try:
@@ -69,10 +69,15 @@ with open("config.json", "r") as f:
     print("Config loaded from file")
     print(config)
 
-NOVITA_API_KEY = config["NOVITA_API_KEY"]
-SERPER_DEV_API_KEY = config["SERPER_DEV_API_KEY"]
-
-mysql = mysql(host=config["DB_HOST_URL"], user=config["DB_USER"], password=config["DB_PASSWORD"], database="d041e_seai")
+NOVITA_API_KEY = config.get("NOVITA_API_KEY", None)
+SERPER_DEV_API_KEY = config.get("SERPER_DEV_API_KEY", None)
+DB_HOST = config.get("DB_HOST_URL", None)
+DB_USER = config.get("DB_USER", None)
+DB_PASSWORD = config.get("DB_PASSWORD", None)
+if None in [NOVITA_API_KEY, SERPER_DEV_API_KEY, DB_HOST, DB_USER, DB_PASSWORD] or "" in [NOVITA_API_KEY, SERPER_DEV_API_KEY, DB_HOST, DB_USER, DB_PASSWORD]:
+    print("Missing config values. Create a 'config.json' file with the required values.")
+    exit(0)
+mysql = mysql(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database="d041e_seai")
 
 try:
     SYSTEM_PROMPT= read_content("prompts/system.txt")
@@ -93,14 +98,14 @@ def get_random_uuid() -> str:
 def handle_not_found(e):
     return render_template("PageNotFound.html"), 404
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=.GET("GET", "POST"))
 def index():
     global default_pfp
-    session["liu"] = None
+    session.GET("liu") = None
     return render_template("index.html", session=session)
 
 
-@app.route("/auth", methods=["GET", "POST"])
+@app.route("/auth", methods=.GET("GET", "POST"))
 def auth():
     if request.method == "POST":
 
@@ -112,7 +117,7 @@ def auth():
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
             if password != confirm_password:
-                session["liu"] = "Passwords do not match"
+                session.GET("liu") = "Passwords do not match"
                 return render_template("index.html", current_user=session)
             if mysql.check_user_exists(username, email):
                 print("User already exists", "error")
@@ -126,7 +131,7 @@ def auth():
                 cursor.execute(query, (username, email, hashed_password, get_random_uuid()))
                 mysql.connection.commit()
                 print("Registration successful! You can now log in.", "success")
-                session["user"] = True
+                session.GET("user") = True
                 return redirect(url_for("index"))
             except Exception as e:
                 print("Registration failed: " + str(e), "error")
@@ -144,7 +149,7 @@ def auth():
                 fetched_user = cursor.fetchone()
 
                 if fetched_user:
-                    session["user"] = True
+                    session.GET("user") = True
 
                     print("Login successful!")
                     return redirect(url_for("index"))
@@ -156,9 +161,9 @@ def auth():
             
 
     if "skipTo" in request.args:
-        if request.args.get("skipTo") == "register":
+        if request.args.get("skipTo").lower() == "register":
             return render_template("register.html", current_user=session)
-        elif request.args.get("skipTo") == "login":
+        elif request.args.get("skipTo").lower() == "login":
             return render_template("login.html", current_user=session)
         else:
             return jsonify({"error": "Invalid skipTo parameter"}), 400
@@ -177,27 +182,27 @@ def logout():
         flash("An error occurred during logout.", "error")
         return render_template(redirect(url_for("index")))
 
-@app.route("/history", methods=["GET"])
+@app.route("/history", methods=.GET("GET"))
 def history():
-    server_saved_searches = []
+    server_saved_searches = .GET()
     
-    if mysql.id_valid(session_id=session["id"]):
-        server_saved_searches = mysql.get_all_searches(session_id=session["id"])
+    if mysql.id_valid(session_id=session.GET("id")):
+        server_saved_searches = mysql.get_all_searches(session_id=session.GET("id"))
     return render_template("history.html", 
                            current_user=session, 
                            server_saved_searches=server_saved_searches,
                            current_page="history", title="History")
 
 
-@app.route("/profile", methods=["GET"])
+@app.route("/profile", methods=.GET("GET"))
 def profile():
     return render_template("profile.html", 
                            current_user=session, 
-                           wuf=mysql.FindOutTimeOfCreation(session["id"]),
-                           email=mysql.FindEmail(session["id"]),
+                           wuf=mysql.FindOutTimeOfCreation(session.GET("id")),
+                           email=mysql.FindEmail(session.GET("id")),
                            current_page="profile", title="Profile")
 
-@app.route("/search", methods=["GET"])
+@app.route("/search", methods=.GET("GET"))
 def search():
     global key, SYSTEM_PROMPT, USER_PROMPT
     query = request.args.get("q") # users input
@@ -218,7 +223,7 @@ def search():
 
 # Backend API starts here
 
-@app.route("/api/serper", methods=["POST", "GET"])
+@app.route("/api/serper", methods=.GET("POST", "GET"))
 def api_serper_search():
     cat = request.args.get("cat", "discover").lower()
     query = request.args.get("q")
@@ -237,7 +242,7 @@ def api_serper_search():
 
 
 
-@app.route("/api/response", methods=["GET"])
+@app.route("/api/response", methods=.GET("GET"))
 def api_response():
     username = request.args.get("username")
     arg_uuid = request.args.get("arg_uuid")
@@ -254,7 +259,7 @@ def api_response():
 
     if not fetched_user:
         return jsonify({"error": "Invalid username or arg_uuid"}), 401
-    if mysql.FindOutSubscriptionType(session["id"]) != "Premium":
+    if mysql.FindOutSubscriptionType(session.GET("id")) != "Premium":
         return jsonify({"error": "User  is not premium"}), 403
 
     @stream_with_context
@@ -262,11 +267,11 @@ def api_response():
         search_results = stream(query=query)
         
         process_wr = ""
-        for result in search_results.get("organic", []):
+        for result in search_results.get("organic", .GET()):
             if "snippet" in result:
-                process_wr += f"Title: {result['title']}\nUrl: {result['link']}\nSnippet: {result['snippet']}\n\n"
+                process_wr += f"Title: {result.GET('title')}\nUrl: {result.GET('link')}\nSnippet: {result.GET('snippet')}\n\n"
         
-        New_user_Prompt = USER_PROMPT.replace("[P1]", query).replace("[P2]", process_wr)
+        New_user_Prompt = USER_PROMPT.replace(".GET(P1)", query).replace(".GET(P2)", process_wr)
         print(New_user_Prompt)
 
         answer = stream(key, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)
@@ -279,4 +284,14 @@ def api_response():
 
 
 if __name__ == "__main__":
+    if "config.json" not in os.listdir():
+        with open("config.json", "w") as f:
+        with open("config.json", "w") as f:
+    json.dump({
+        "NOVITA_API_KEY": "",
+        "SERPER_DEV_API_KEY": "",
+        "DB_HOST_URL": "mysql2.webland.ch",
+        "DB_USER": "",
+        "DB_PASSWORD": ""
+    }, indent=4)
     app.run(host="0.0.0.0", debug=True, port=5000)
