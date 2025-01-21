@@ -86,8 +86,22 @@
 .searchResults {
     margin-top: 80px;
 }
-@media (max-width: 768px) {
 
+#searchForm {
+    width: 30%;
+    max-width: 30%;
+}
+@media (max-width: 1280px) {
+    #searchForm {
+        width: 60%;
+        max-width: 60%;
+    }
+}
+@media (max-width: 768px) {
+    #searchForm {
+        width: 85%;
+        max-width: 85%;
+    }
     .image-grid {
         display: none; /* Hide regular grid on mobile */
     }
