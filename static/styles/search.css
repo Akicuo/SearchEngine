@@ -99,8 +99,8 @@
 }
 @media (max-width: 768px) {
     #searchForm {
-        width: 85%;
-        max-width: 85%;
+        width: 90%;
+        max-width: 90%;
     }
     .image-grid {
         display: none; /* Hide regular grid on mobile */
