@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Seai 2.0</title>
-    <meta name="viewport" content="width=device-width, initial-scale=3.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Seai 2.0">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
@@ -72,12 +72,16 @@
         </div>
     </div>
     <main>
-        <div class="searchResults column blurred-text" id="searchResults">
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
+        <div class="searchResults" id="searchResults">
+            <div class="image-results">
+                <div class="image-grid">
+                    <a href="#" class="image-result">
+                        <img src="https://via.placeholder.com/300" alt="Placeholder image" class="grid-image">
+                        <div class="image-overlay">
+                            <p class="image-title">Image Title</p>
+                            <p class="image-source">example.com</p>
+                        </div>
+                    </a>
             <a href="#" class="searchResult" >
                 <h3 class="searchResultTitle" >Just a placeholder</h3>
                 <h5 class="searchResultLink" >www.placeholder.result</h5>

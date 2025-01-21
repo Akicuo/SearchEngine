@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (data.organic) {
             document.querySelector('.searchResults').classList.toggle('image-results', false);
+            document.querySelector('.searchResults').classList.toggle('fdc', true);
             data.organic.forEach(item => {
                 const result = document.createElement('a');
                 result.className = "searchResult";
@@ -68,7 +69,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const link = document.createElement('h5');
                 link.className = "searchResultLink";
-                link.textContent = item.link;
+                // Format URL path as breadcrumbs
+                const url = new URL(item.link);
+                const pathSegments = url.pathname.split('/').filter(segment => segment.length > 0);
+                link.textContent = `${url.hostname} ${pathSegments.length > 0 ? '> ' + pathSegments.join(' > ') : ''}`;
 
                 const snippet = document.createElement('p');
                 snippet.className = "searchResultContent";
@@ -80,6 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 searchResults.appendChild(result);
             });
         } else if (data.images) {
+            document.querySelector('.searchResults').classList.toggle('fdc', false);
             data.images.forEach(item => {
                 document.querySelector('.searchResults').classList.toggle('image-results', true);
                 const result = document.createElement('img');

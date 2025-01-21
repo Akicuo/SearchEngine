@@ -1,20 +1,105 @@
-@media (max-width: 768px) {
-    #searchInput {
-        max-width: 30%;
-        box-sizing: border-box;
-        padding: 10px;
-        font-size: 16px;
-    }
-    .searchResult {
-        max-width: 65%;
-    }
-    .searchResults {
-        justify-content: center;
-    }
-   .searchResults img {
-    width: 20%;
-    height: 20%;
-    display: inline-block;
-    margin: 5px;
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    padding: 20px;
 }
+
+/* New container for split layout */
+.image-split-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Left and right columns for mobile */
+.image-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.grid-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+.image-result {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px;
+    transform: translateY(100%);
+    transition: transform 0.2s ease;
+}
+
+.image-result:hover .image-overlay {
+    transform: translateY(0);
+}
+
+.image-title {
+    font-size: 14px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.image-source {
+    font-size: 12px;
+    color: #ccc;
+    margin: 4px 0 0;
+}
+
+@media (max-width: 768px) {
+    .image-grid {
+        display: none; /* Hide regular grid on mobile */
+    }
+    
+    .image-split-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px;
+    }
+    
+    .image-column {
+        width: 48%; /* Two columns with small gap */
+    }
+    
+    .grid-image {
+        height: 150px;
+    }
+    
+    .image-overlay {
+        padding: 8px;
+    }
+    
+    .image-title {
+        font-size: 12px;
+    }
+    
+    .image-source {
+        font-size: 10px;
+    }
+}
+
+
+.fdc {
+    display: flex;
+    flex-direction: column;
 }
