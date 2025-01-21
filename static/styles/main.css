@@ -117,7 +117,8 @@ body {
 @media (max-width: 768px) {
     .search-container {
         padding: 15px;
-        min-height: calc(100vh - 120px); /* Account for mobile search types bar */
+        min-height: auto;
+        margin-bottom: 20px;
     }
 }
 
@@ -314,18 +315,17 @@ a {
 
 @media (max-width: 768px) {
     .searchTypes {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: 0;
+        position: static;
+        margin: 10px 0;
         padding: 10px;
-        border-radius: 0;
         background: rgba(26, 26, 26, 0.98);
         backdrop-filter: blur(10px);
         justify-content: center;
         overflow-x: auto;
-        z-index: 1000;
+        z-index: 1;
+        width: 100%;
+        max-width: 600px;
+        border-radius: 8px;
     }
     
     .searchTypes a {
@@ -396,7 +396,7 @@ a h5 {
 }
 
 .searchResult {
-    width: 80%;
+    width: 90%;
     margin: 15px;
     padding: 15px;
     background-color: rgba(30, 30, 30, 0.9);

@@ -64,7 +64,30 @@
     margin: 4px 0 0;
 }
 
+
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: flex;
+}
+
 @media (max-width: 768px) {
+    .mobile-only {
+        display: flex;
+    }
+    
+    .desktop-only {
+        display: none;
+    }
+}
+
+.searchResults {
+    margin-top: 80px;
+}
+@media (max-width: 768px) {
+
     .image-grid {
         display: none; /* Hide regular grid on mobile */
     }
