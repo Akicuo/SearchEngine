@@ -3,9 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchForm = document.getElementById('searchForm');
     const searchInput = document.getElementById('searchInput');
 
-    // Clean initial input value
+
     const cleanInitialValue = (value) => {
-        const cleaned = value.replace(/^"|"$/g, ''); // Remove surrounding quotes
+        const cleaned = value.replace(/^"|"$/g, '');
         return cleaned === 'None' ? '' : cleaned;
     };
     
@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Handle form submission
     searchForm.addEventListener('submit', function(event) {
         event.preventDefault();
         performSearch();
