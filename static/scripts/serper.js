@@ -118,10 +118,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    searchInput.addEventListener('input', debounce(function() {
-        const activeCategory = document.querySelector('.WebSearchCatag.active');
-        fetchSearchResults(activeCategory ? activeCategory.textContent.trim() : '');
-    }, 500));
 });
 
 // Debounce helper function

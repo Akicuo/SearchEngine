@@ -3,10 +3,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchForm = document.getElementById('searchForm');
     const searchInput = document.getElementById('searchInput');
 
-    // Clear "None" placeholder from server-side template
-    if (searchInput.value.trim() === 'None') {
-        searchInput.value = '';
-    }
+    // Clean initial input value
+    const cleanInitialValue = (value) => {
+        const cleaned = value.replace(/^"|"$/g, ''); // Remove surrounding quotes
+        return cleaned === 'None' ? '' : cleaned;
+    };
+    
+    searchInput.value = cleanInitialValue(searchInput.value.trim());
 
     function getCurrentCategory() {
         const params = new URLSearchParams(window.location.search);
@@ -16,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function performSearch() {
         const searchInput = document.getElementById('searchInput');
         const searchTerm = searchInput.value.trim();
+        console.log(searchTerm);
         if (searchTerm) {
             const category = getCurrentCategory();
             window.location.href = `/search?q=${encodeURIComponent(searchTerm)}&cat=${category}`;

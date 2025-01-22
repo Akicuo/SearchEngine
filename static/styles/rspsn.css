@@ -1,0 +1,17 @@
+.knowledge-graph-card.mobile-only{
+    display: none;
+}
+@media (max-width: 768px) {
+    .knowledge-graph-card.mobile-only{
+        display: flex;
+    }
+}
+
+.knowledge-graph-card.desktop-only{
+    display: flex;
+}
+@media (max-width: 768px) {
+    .knowledge-graph-card.desktop-only{
+        display: none;
+    }
+}

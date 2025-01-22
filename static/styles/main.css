@@ -352,7 +352,7 @@ a {
 .searchResults {
     display: flex;
     margin: 20px;
-    row-gap: 20px;
+    row-gap: 5px;
     flex-wrap: wrap;
 }
 #searchButton svg {
@@ -415,15 +415,14 @@ a h5 {
 }
 
 .searchResult {
-    width: 80%;
+    width: 95%;
     margin: 15px;
     padding: 15px;
     background-color: rgba(30, 30, 30, 0.9);
     border-radius: 8px;
     transition: all 0.2s ease;
 }
-.searchResult:nth-child(1){
-}
+
 
 .searchResult:hover {
     background-color: rgba(255, 51, 51, 0.05);
@@ -546,4 +545,13 @@ a h5 {
 
 .width-250 {
     width: 250px;
+}
+.flexible-row {
+    display: flex;
+    flex-direction: row;
+}
+@media (max-width: 768px) {
+    .flexible-row {
+        flex-direction: column;
+    }
 }
