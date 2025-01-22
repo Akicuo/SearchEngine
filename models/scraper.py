@@ -3,6 +3,7 @@ import time,json
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 import html
+import re
 def search_duckduckgo(query: str,
                       pos_start: int = 1,
                       keep_knowledge_graph: bool = True,
@@ -143,9 +144,36 @@ def qwant_knowledge(query: str):
         finally:
             browser.close()
 
+
+
+def mojeek_summary(query:str):
+    url = f"https://www.mojeek.com/search?q={query}&mal=1"
+    with sync_playwright() as p:
+        # Launch browser in headless mode
+        browser = p.chromium.launch(headless=False, executable_path=r"C:\Program Files\Google\Chrome\Application\chrome.exe")
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 OPR/115.0.0.0"
+        )
+        page = context.new_page()
+        
+        page.goto(url)
+        page.wait_for_selector("div#kalid")
+        page.wait_for_timeout(5000)
+
+        soup = BeautifulSoup(page.content(), 'html.parser')
+        text = soup.find("div", class_="content").decode_contents()
+
+        text = re.sub(r'<span class="src">.*?<\/span>', '', text, flags=re.DOTALL)
+        words = text.replace("</span>", "")
+        return words
+    # Usage
+
+
+
     
 """ Example Response:
 {"status":"success","data":{"query":{"locale":"de_ch","query":"valorant"},"result":{"title":"Valorant","description":"Valorant ist ein kostenfrei spielbarer Ego-Shooter von Riot Games, der am 2. Juni 2020 für Windows veröffentlicht wurde.\nDas Spiel stellt eine Mischung aus Helden- und Taktik-Shooter dar. Zwei Fünferteams spielen gegeneinander. Die Spieler übernehmen...","thumbnail":{"landscape":"https://s1.qwant.com/thumbr/0x220/1/8/046fe7342c8fa74a54a34e4df1e074542e4b52e5064bf82b6f5f67e98011e6/1024px-Valorant_logo_-_pink_color_version.svg.png?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Ff%2Ffc%2FValorant_logo_-_pink_color_version.svg%2F1024px-Valorant_logo_-_pink_color_version.svg.png&amp;q=0&amp;b=1&amp;p=0&amp;a=0","portrait":"https://s2.qwant.com/thumbr/300x0/7/4/5723fdb24e03c01d70bd7698bcd526856cb1b86dab0b13b1ac62807e6056ba/1024px-Valorant_logo_-_pink_color_version.svg.png?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Ff%2Ffc%2FValorant_logo_-_pink_color_version.svg%2F1024px-Valorant_logo_-_pink_color_version.svg.png&amp;q=0&amp;b=1&amp;p=0&amp;a=0"},"url":"https://de.wikipedia.org/wiki/Valorant","infobox_type":"video_game"}}}
 """
 
 # print(qwant_knowledge("valorant"))
+

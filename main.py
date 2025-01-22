@@ -14,7 +14,7 @@ import json, time
 from datetime import datetime
 from models.serper import Serper
 import os
-from models.scraper import qwant_knowledge
+from models.scraper import qwant_knowledge, mojeek_summary
 from models.mysql import db as mysql
 import hashlib
 import requests
@@ -184,6 +184,15 @@ def search():
 
 
 # Backend API starts here
+
+@app.route("/api/summary", methods=["POST", "GET"])
+def api_summary():
+    query = request.args.get("q", "") # users input
+    data = mojeek_summary(query=query)
+
+    return {"text": data.replace('"' ,'')}
+
+
 @app.route("/api/knowledge", methods=["POST", "GET"])
 def api_knowledge():
     query = request.args.get("q", "") # users input
