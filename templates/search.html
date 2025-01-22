@@ -10,7 +10,6 @@
 <body>
     <div style="display: none;">
         <p id="llm"> {{ llm }}</p>
-        <p id="knowledgeGraph"> {{ kgraph }}</p>
         <p id="searchOffset"> {{ search_offset }}</p>
     </div>
     <!-- Header -->
@@ -49,9 +48,15 @@
 
 
     <div class="searchNav">
-        <form id="searchForm">
-            <input type="text" class="search-input" id="searchInput" value="{{ query }}">
-            <button type="submit" class="search-button" id="searchButton" data-lang-key="search" >Search</button>
+        <form id="searchForm row">
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" value="{{ query }}">
+                <button type="submit" class="search-button" id="searchButton" aria-label="Search">
+                    <svg focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="#4285f4" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+                    </svg>
+                </button>
+            </div>
             <div class="searchTypes mobile-only">
                 <a class="WebSearchCatag active" href="/search?cat=discover" data-lang-key="SearchTypeAll">
                     Discover 
@@ -67,6 +72,9 @@
                 </a>
             </div>
         </form>
+        
+        <!-- Knowledge Graph Container -->
+        
         <div class="searchTypes desktop-only">
             <a class="WebSearchCatag active" href="/search?cat=discover" data-lang-key="SearchTypeAll">
                 Discover 
@@ -83,112 +91,97 @@
         </div>
     </div>
     <main>
-        <div class="searchResults" id="searchResults">
-            <div class="image-results">
-                <div class="image-grid">
-                    <a href="#" class="image-result">
-                        <img src="https://via.placeholder.com/300" alt="Placeholder image" class="grid-image">
-                        <div class="image-overlay">
-                            <p class="image-title">Image Title</p>
-                            <p class="image-source">example.com</p>
-                        </div>
-                    </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
+        <div id="resultHolder" class="col">
 
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
-            <a href="#" class="searchResult" >
-                <h3 class="searchResultTitle" >Just a placeholder</h3>
-                <h5 class="searchResultLink" >www.placeholder.result</h5>
-                <p class="searchResultContent" >This site does not contain any content!</p>
-            </a>
+            {% if knowledge.status == "success" %}
+            <div class="knowledge-graph-card col">
+                <h3>{{ knowledge.data.result.title }}</h3>
+                <p>{{ knowledge.data.result.description }}</p>
+                {% if knowledge.data.result.image %}
+                <img src="{{ knowledge.data.result.image }}" alt="{{ knowledge.data.result.title }}">
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="searchResults" id="searchResults">
+
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+                <a href="#" class="searchResult" >
+                    <h3 class="searchResultTitle" >Just a placeholder</h3>
+                    <h5 class="searchResultLink" >www.placeholder.result</h5>
+                    <p class="searchResultContent" >This site does not contain any content!</p>
+                </a>
+            </div>
         </div>
 
     </main>
@@ -200,7 +193,7 @@
     
     
     
-    <script src="/static/scripts/search.js"></script>
+    
     <script src="/static/scripts/serper.js"></script>
     <script src="/static/scripts/translate.js"></script>
     

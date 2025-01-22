@@ -104,6 +104,7 @@ body {
     background-color: #ff3333;
     color: #ffffff;
 }
+
 .search-container {
     display: flex;
     flex-direction: column;
@@ -150,14 +151,26 @@ body {
 }
 
 .search-button {
-    background-color: #ff3333;
-    color: white;
+    background: none;
     border: none;
-    padding: 12px 25px;
-    margin-left: 10px;
-    border-radius: 25px;
+    padding: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.search-button:hover {
+    background-color: rgba(66,133,244,0.1);
+}
+
+.search-button svg {
+    display: block;
+    width: 24px;
+    height: 24px;
 }
 
 .preferences-container {
@@ -291,9 +304,11 @@ a {
 }
 
 .searchTypes {
+    
     display: flex;
     margin-left: auto;
     margin-right: 40px;
+    top: 20px;
     gap: 8px;
     padding: 8px;
     background: rgba(30, 30, 30, 0.9);
@@ -340,7 +355,11 @@ a {
     row-gap: 20px;
     flex-wrap: wrap;
 }
-
+#searchButton svg {
+    position: absolute;
+    margin-left: 80%;
+    
+}
 .column {
     display: flex;
     flex-direction: column;
@@ -396,7 +415,7 @@ a h5 {
 }
 
 .searchResult {
-    width: 90%;
+    width: 80%;
     margin: 15px;
     padding: 15px;
     background-color: rgba(30, 30, 30, 0.9);
@@ -404,7 +423,6 @@ a h5 {
     transition: all 0.2s ease;
 }
 .searchResult:nth-child(1){
-    margin-top: 40px;
 }
 
 .searchResult:hover {
@@ -460,7 +478,10 @@ a h5 {
         padding: 0 10px;
     }
 }
-
+.row {
+    display: flex;
+    flex-direction: row;
+}
 @media (max-width: 768px) {
     .searchTypes {
         position: static;

@@ -14,6 +14,7 @@ import json, time
 from datetime import datetime
 from models.serper import Serper
 import os
+from models.scraper import qwant_knowledge
 from models.mysql import db as mysql
 import hashlib
 import requests
@@ -174,22 +175,22 @@ def profile():
 def search():
     global key, SYSTEM_PROMPT, USER_PROMPT
     query = request.args.get("q") # users input
-    page = int(request.args.get("p", "1"))
-    llm = bit_to_bool(int(request.args.get("llm", "1")))
-    knowledgeGraph = bit_to_bool(int(request.args.get("kgraph", "1")))
-    search_offset = (page - 1) * 10
+    
     return render_template(
-        "search.html",
+        "search.html", 
         query=query,
-        page=page,
-        llm=llm,
-        kgraph=knowledgeGraph,
-        current_user=session,
-        search_offset=search_offset,
+        knowledge=qwant_knowledge(query=query)
     )
 
 
 # Backend API starts here
+@app.route("/api/knowledge", methods=["POST", "GET"])
+def api_knowledge():
+    query = request.args.get("q", "") # users input
+    data = qwant_knowledge(query=query)
+    data = data if isinstance(data, dict) else {}
+    return data
+    
 
 @app.route("/api/serper", methods=["POST", "GET"])
 def api_serper_search():
@@ -199,7 +200,7 @@ def api_serper_search():
         return jsonify(serper.search_images(query=query))
     elif "news" == cat:
         return jsonify(serper.search_news(query=query))
-    elif  cat.lower() in ["discover", "all"]:
+    elif  cat.lower() in ["discover", "all", "alles"]:
         return jsonify(serper.search_discover(query=query))
     elif "videos" == cat:
         return jsonify(serper.search_videos(query=query))
