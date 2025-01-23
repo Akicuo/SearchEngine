@@ -6,15 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Seai 2.0">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" href="/static/styles/main.css">
-    <link rel="stylesheet" href="/static/styles/header.css">
-    <link rel="stylesheet" href="/static/styles/rspsn.css">
-    <link rel="stylesheet" href="/static/styles/search.css">
 </head>
 <body>
-    <p id="QueryParagraph" style="display: none;">{{ query }}</p>
     <div style="display: none;">
         <p id="llm"> {{ llm }}</p>
+        <p id="knowledgeGraph"> {{ kgraph }}</p>
         <p id="searchOffset"> {{ search_offset }}</p>
     </div>
     <!-- Header -->
@@ -53,161 +49,146 @@
 
 
     <div class="searchNav">
-        <div class="flexible-row">
-            <form id="searchForm" class="flexible-row">
-                <div class="search-container">
-                    <input type="text" class="search-input" id="searchInput" value="{{ query if query and query != 'None' else '' }}">
-                </div>
-
-            </form>
-            
+        <form id="searchForm">
+            <input type="text" class="search-input" id="searchInput" value="{{ query }}">
+            <button type="submit" class="search-button" id="searchButton" data-lang-key="search" >Search</button>
+            <div class="searchTypes mobile-only">
+                <a class="WebSearchCatag active" href="/search?cat=discover" data-lang-key="SearchTypeAll">
+                    Discover    
+                </a>
+                <a class="WebSearchCatag" href="/search?cat=images" data-lang-key="SearchTypeImages">
+                    Images 
+                </a>
+                <a class="WebSearchCatag" href="/search?cat=news" data-lang-key="SearchTypeNews">
+                    News 
+                </a>
+                <a class="WebSearchCatag" href="/search?cat=videos" data-lang-key="SearchTypeVideos">
+                    Videos 
+                </a>
+            </div>
+        </form>
+        <div class="searchTypes desktop-only">
+            <a class="WebSearchCatag active" href="/search?cat=discover" data-lang-key="SearchTypeAll">
+                Discover 
+            </a>
+            <a class="WebSearchCatag" href="/search?cat=images" data-lang-key="SearchTypeImages">
+                Images 
+            </a>
+            <a class="WebSearchCatag" href="/search?cat=news" data-lang-key="SearchTypeNews">
+                News 
+            </a>
+            <a class="WebSearchCatag" href="/search?cat=videos" data-lang-key="SearchTypeVideos">
+                Videos 
+            </a>
         </div>
     </div>
     <main>
-        <div id="resultHolder" class="col">
-            <div class="flexible-row">
-                <div class="searchTypes">
-                    <a class="WebSearchCatag active" href="/search?cat=discover" data-lang-key="SearchTypeAll">
-                        Discover 
-                    </a>
-                    <a class="WebSearchCatag" href="/search?cat=images" data-lang-key="SearchTypeImages">
-                        Images 
-                    </a>
-                    <a class="WebSearchCatag" href="/search?cat=news" data-lang-key="SearchTypeNews">
-                        News 
-                    </a>
-                    <a class="WebSearchCatag" href="/search?cat=videos" data-lang-key="SearchTypeVideos">
-                        Videos 
-                    </a>
-                </div>
-
-
-                    <div class="mobile-only col">
-                        <div class="summaryte">
-                            <div id="summary-card">
-                                <div id="summaryContentMobile"></div>
-                            </div>
+        <div class="searchResults" id="searchResults">
+            <div class="image-results">
+                <div class="image-grid">
+                    <a href="#" class="image-result">
+                        <img src="https://via.placeholder.com/300" alt="Placeholder image" class="grid-image">
+                        <div class="image-overlay">
+                            <p class="image-title">Image Title</p>
+                            <p class="image-source">example.com</p>
                         </div>
-                        {% if knowledge.status %}
-                        <div class="summaryte">
-                            <div class="knowledge-graph-card">
-                                <div class="row">
-                                    <div class="col">
-                                        <h3>{{ knowledge.data.result.title }}</h3>
-                                        <p>{{ knowledge.data.result.description }}</p>
-                                        <a class="knowledgeReadMoreHyperlink" href="{{ knowledge.data.result.url }}">Read more</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-                    </div>
+                    </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
 
-                <div class="searchResults row" id="searchResults">
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                </div>
-                    
-
-
-                    
-                <div class="desktop-only col">
-                    
-                    {% if knowledge.status %}
-                    <div class="summaryte">
-                        <div class="knowledge-graph-card">
-                            <div class="row">
-                                <div class="col">
-                                    <h3>{{ knowledge.data.result.title }}</h3>
-                                    <p>{{ knowledge.data.result.description }}</p>
-                                    <a class="knowledgeReadMoreHyperlink" href="{{ knowledge.data.result.url }}">Read more</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                    <div class="summaryte">
-                        <div id="summary-card" style="margin-left: 30px;">
-                            <div id="summaryContentDesktop"></div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
+            <a href="#" class="searchResult" >
+                <h3 class="searchResultTitle" >Just a placeholder</h3>
+                <h5 class="searchResultLink" >www.placeholder.result</h5>
+                <p class="searchResultContent" >This site does not contain any content!</p>
+            </a>
         </div>
 
     </main>
@@ -219,20 +200,27 @@
     
     
     
-    
-    <script src="/static/scripts/serper.js"></script>
     <script src="/static/scripts/search.js"></script>
+    <script src="/static/scripts/serper.js"></script>
     <script src="/static/scripts/translate.js"></script>
-    <script src="/static/scripts/summary.js"></script>
-    <link rel="stylesheet" href="/static/styles/main.css">
     
 
-    
+    <link rel="stylesheet" href="/static/styles/main.css">
+    <link rel="stylesheet" href="/static/styles/header.css">
+    <link rel="stylesheet" href="/static/styles/search.css">
     <script>
         document.querySelector('.hamburger').addEventListener('click', function() {
             this.classList.toggle('active');
             document.querySelector('.nav-links').classList.toggle('active');
         });
     </script>
+    {% if session.get('message') %}
+    <div id="popupMessage" class="popup-message">
+        <div class="popup-content">
+            <span class="popup-close">&times;</span>
+            <p>{{ session['message'] }}</p>
+        </div>
+    </div>
+    {% endif %}
 </body>
 </html>

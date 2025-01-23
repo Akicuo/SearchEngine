@@ -15,7 +15,7 @@ from datetime import datetime
 from models.serper import Serper
 import os
 from models.scraper import qwant_knowledge, mojeekk_kalid_summary_id
-from models.mysql import db as mysql
+from models.mysql import DB as db_model
 import hashlib
 import requests
 import json
@@ -43,7 +43,7 @@ with open("config.json", "r") as f:
 
 SERPER_DEV_API_KEY = config["SERPER_DEV_API_KEY"]
 
-mysql = mysql(host=config["DB_HOST_URL"], user=config["DB_USER"], password=config["DB_PASSWORD"], database="d041e_seai")
+db_model = db_model(host=config["DB_HOST_URL"], user=config["DB_USER"], password=config["DB_PASSWORD"], database="d041e_seai")
 
 try:
     SYSTEM_PROMPT= read_content("prompts/system.txt")
@@ -91,20 +91,20 @@ def auth():
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
             if password != confirm_password:
-                session["liu"] = "Passwords do not match"
-                return render_template("index.html", current_user=session)
-            if mysql.check_user_exists(username, email):
-                print("User already exists", "error")
-                return render_template("index.html", current_user=session)
+                session["message"] = "Passwords do not match"
+                return render_template("register.html", current_user=session)
+            if db_model.check_user_exists(username, email):
+                session["message"] = "User already exists"
+                return render_template("register.html", current_user=session)
 
             try:
-                cursor = mysql.connection.cursor()
+                cursor = db_model.connection.cursor()
                 query = (
                     "INSERT INTO users (username, email, password, uuid) VALUES (%s, %s, %s, %s)"
                 )
                 cursor.execute(query, (username, email, hashed_password, get_random_uuid()))
-                mysql.connection.commit()
-                print("Registration successful! You can now log in.", "success")
+                db_model.connection.commit()
+                session["message"] = "Registration successful! You can now log in.", "success"
                 session["user"] = True
                 return redirect(url_for("index"))
             except Exception as e:
@@ -116,7 +116,7 @@ def auth():
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
             try:
-                cursor = mysql.connection.cursor(dictionary=True)
+                cursor = db_model.connection.cursor(dictionary=True)
                 query = "SELECT * FROM users WHERE username = %s AND password = %s"
                 cursor.execute(query, (username, hashed_password))
 
@@ -125,10 +125,10 @@ def auth():
                 if fetched_user:
                     session["user"] = True
 
-                    print("Login successful!")
+                    session["message"] = "Login successful!"
                     return redirect(url_for("index"))
                 else:
-                    print("Invalid username or password")
+                    session["message"] = "Invalid username or password"
                     return render_template("index.html", current_user=session)
             except Exception as e:
                 print("Error: " + str(e))
@@ -160,8 +160,8 @@ def logout():
 def history():
     server_saved_searches = []
     
-    if mysql.id_valid(session_id=session["id"]):
-        server_saved_searches = mysql.get_all_searches(session_id=session["id"])
+    if db_model.id_valid(session_id=session["id"]):
+        server_saved_searches = db_model.get_all_searches(session_id=session["id"])
     return render_template("history.html", 
                            current_user=session, 
                            server_saved_searches=server_saved_searches,
@@ -172,8 +172,8 @@ def history():
 def profile():
     return render_template("profile.html", 
                            current_user=session, 
-                           wuf=mysql.FindOutTimeOfCreation(session["id"]),
-                           email=mysql.FindEmail(session["id"]),
+                           wuf=db_model.FindOutTimeOfCreation(session["id"]),
+                           email=db_model.FindEmail(session["id"]),
                            current_page="profile", title="Profile")
 
 @app.route("/search", methods=["GET"])
@@ -206,9 +206,6 @@ def api_knowledge():
     data = data if isinstance(data, dict) else {}
     return data
 
-
-@app.route("/api/serper", methods=["POST", "GET"])
-
 @app.route("/api/serper", methods=["POST", "GET"])
 def api_serper_search():
     cat = request.args.get("cat", "discover").lower()
@@ -223,48 +220,6 @@ def api_serper_search():
         return jsonify(serper.search_videos(query=query))
     else:
         return jsonify({"error": "Invalid category"}), 400
-        
-    
-
-
-
-@app.route("/api/response", methods=["GET"])
-def api_response():
-    username = request.args.get("username")
-    arg_uuid = request.args.get("arg_uuid")
-    query = request.args.get("query")
-
-    if username is None or arg_uuid is None or query is None:
-        return jsonify({"error": "Missing Parameters"}), 400
-
-    # Validate user credentials
-    cursor = mysql.connection.cursor(dictionary=True)
-    query_check = "SELECT * FROM users WHERE username = %s AND uuid = %s"
-    cursor.execute(query_check, (username, arg_uuid))
-    fetched_user = cursor.fetchone()
-
-    if not fetched_user:
-        return jsonify({"error": "Invalid username or arg_uuid"}), 401
-    if mysql.FindOutSubscriptionType(session["id"]) != "Premium":
-        return jsonify({"error": "User  is not premium"}), 403
-
-    @stream_with_context
-    def generate_response():
-        search_results = stream(query=query)
-        
-        process_wr = ""
-        for result in search_results.get("organic", []):
-            if "snippet" in result:
-                process_wr += f"Title: {result['title']}\nUrl: {result['link']}\nSnippet: {result['snippet']}\n\n"
-        
-        New_user_Prompt = USER_PROMPT.replace("[P1]", query).replace("[P2]", process_wr)
-        print(New_user_Prompt)
-
-        answer = stream(SERPER_DEV_API_KEY, query=New_user_Prompt, system_prompt=SYSTEM_PROMPT)
-
-        return answer
-
-    return Response(generate_response(), mimetype='text/plain')
 
         
 

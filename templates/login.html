@@ -66,11 +66,18 @@
     
     
     <script src="{{ url_for('static',filename='scripts/search.js') }}"></script>
-
+    <script src="{{ url_for('static',filename='scripts/popup.js') }}"></script>
     <script src="{{ url_for('static',filename='scripts/translate.js') }}"></script>
 
     
 
-
+    {% if session.get('message') %}
+    <div id="popupMessage" class="popup-message">
+        <div class="popup-content">
+            <span class="popup-close">&times;</span>
+            <p>{{ session['message'] }}</p>
+        </div>
+    </div>
+    {% endif %}
 </body>
 </html>
