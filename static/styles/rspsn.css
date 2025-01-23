@@ -15,3 +15,22 @@
         display: none;
     }
 }
+
+.flexible-column {
+    display: flex; 
+    flex-direction: column;
+}
+@media (max-width: 768px) {
+    .flexible-column{
+        display: flex; 
+        flex-direction: row;
+    }
+}
+.searchTypes.mobile-only {
+    display: none;
+}
+@media (max-width: 768px) {
+    .searchTypes.mobile-only{
+        display: block
+    }
+}

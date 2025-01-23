@@ -273,6 +273,7 @@
     .knowledge-graph-card {
         display: block;
         max-width: 95%;
+        margin-top: 130px;
         top: 30px;
         padding: 15px;
     }
