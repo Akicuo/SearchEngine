@@ -17,7 +17,6 @@ import os
 from models.scraper import qwant_knowledge, mojeekk_kalid_summary_id
 from models.mysql import DB as db_model
 import hashlib
-import requests
 import json
 import regex as re
 import uuid
@@ -225,4 +224,4 @@ def api_serper_search():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True, port=5000)
+    app.run(host="0.0.0.0", debug=False, port=5000)
