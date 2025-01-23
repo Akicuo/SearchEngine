@@ -52,8 +52,8 @@ Erstellen Sie eine `config.json`-Datei im Stammverzeichnis des Projekts und füg
 ```json
 {
     "SERPER_DEV_API_KEY": "x",
-    "DB_HOST_URL": "x",
-    "DB_USER": "x",
+    "DB_HOST_URL": "mysql2.webland.ch",
+    "DB_USER": "d041e_seai",
     "DB_PASSWORD": "x"
 }
 ```
