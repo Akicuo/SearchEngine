@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="/static/styles/search.css">
 </head>
 <body>
-    <p id="QueryParagraph">{{ query }}</p>
+    <p id="QueryParagraph" style="display: none;">{{ query }}</p>
     <div style="display: none;">
         <p id="llm"> {{ llm }}</p>
         <p id="searchOffset"> {{ search_offset }}</p>
@@ -98,26 +98,28 @@
     <main>
         <div id="resultHolder" class="col">
             <div class="flexible-row">
-                
-            {% if knowledge.status == "success" %}
                 <div class="mobile-only">
-                    <div class="knowledge-graph-card">
-                        <div class="row">
-                            <div class="col">
-                                <h3>{{ knowledge.data.result.title }}</h3>
-                                <p>{{ knowledge.data.result.description }}</p>
-                                <a class="knowledgeReadMoreHyperlink" href="{{ knowledge.data.result.url }}">Read more</a>
+                    <div class="column" id="col">
+                        {% if knowledge.status == "success" %}
+                        <div class="knowledge-graph-card">
+                            <div class="row">
+                                <div class="col">
+                                    <h3>{{ knowledge.data.result.title }}</h3>
+                                    <p>{{ knowledge.data.result.description }}</p>
+                                    <a class="knowledgeReadMoreHyperlink" href="{{ knowledge.data.result.url }}">Read more</a>
+                                </div>
+                            
                             </div>
-                           
+                        </div>
+                        {% endif %}
+
+
+                        <div id="summary-card">
+                            <div id="summaryContent"></div>
                         </div>
                     </div>
                 </div>
-            {% else %}
-                <div class="knowledge-graph-card col">
-                    <h3>Knowledge for ' {{ query }}' not found.</h3>
-                    <p>Sorry! Doesn't seem like I know anything about that...</p>
-                </div>
-            {% endif %}
+
 
                 <div class="searchResults" id="searchResults">
 
@@ -198,25 +200,30 @@
                         <p class="searchResultContent" >This site does not contain any content!</p>
                     </a>
                 </div>
-                {% if knowledge.status == "success" %}
-                <div class="desktop-only">
-                    <div class="knowledge-graph-card">
-                        <div class="row">
-                            <div class="col">
-                                <h3>{{ knowledge.data.result.title }}</h3>
-                                <p>{{ knowledge.data.result.description }}</p>
-                                <a class="knowledgeReadMoreHyperlink" href="{{ knowledge.data.result.url }}">Read more</a>
+                    
+                        <div class="desktop-only">
+                            <div class="column" id="col">
+                                {% if knowledge.status == "success" %}
+                                <div class="knowledge-graph-card">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h3>{{ knowledge.data.result.title }}</h3>
+                                            <p>{{ knowledge.data.result.description }}</p>
+                                            <a class="knowledgeReadMoreHyperlink" href="{{ knowledge.data.result.url }}">Read more</a>
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+                                {% endif %}
+
+
+                                <div id="summary-card">
+                                    <div id="summaryContent"></div>
+                                </div>
                             </div>
-                            
                         </div>
-                    </div>
+                    
                 </div>
-            {% else %}
-                <div class="knowledge-graph-card col">
-                    <h3>Knowledge for ' {{ query }}' not found.</h3>
-                    <p>Sorry! Doesn't seem like I know anything about that...</p>
-                </div>
-            {% endif %}
             </div>
         </div>
 
@@ -233,6 +240,8 @@
     <script src="/static/scripts/serper.js"></script>
     <script src="/static/scripts/search.js"></script>
     <script src="/static/scripts/translate.js"></script>
+    <script src="/static/scripts/summary.js"></script>
+    <link rel="stylesheet" href="/static/styles/main.css">
     
 
     

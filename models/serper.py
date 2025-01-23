@@ -1,5 +1,6 @@
 import requests
 import json
+from playwright.sync_api import sync_playwright
 
 class Serper:
     def __init__(self, api_key):
@@ -58,3 +59,5 @@ class Serper:
             return json.loads(response.text)
         except requests.exceptions.RequestException as e:
             return {"error": str(e)}
+  
+                    

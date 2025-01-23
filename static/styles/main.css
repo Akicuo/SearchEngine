@@ -292,6 +292,7 @@ input:checked + .slider:before {
     border: 1px red solid;
     padding: 10px;
     border-radius: 15px;
+    max-height: 50px ;
 }
 
 a {
@@ -359,6 +360,28 @@ a {
     position: absolute;
     margin-left: 80%;
     
+}
+#col {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+#col.desktop-only.knowledge-graph-card {
+    display: block;
+}
+#col.desktop-only.summary-card {
+    display: block;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #1e1e1e;
+    box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
+}
+.col {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
 }
 .column {
     display: flex;

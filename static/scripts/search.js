@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function performSearch() {
+        
         const searchInput = document.getElementById('searchInput');
         const searchTerm = searchInput.value.trim();
         console.log(searchTerm);

@@ -14,7 +14,7 @@ import json, time
 from datetime import datetime
 from models.serper import Serper
 import os
-from models.scraper import qwant_knowledge, mojeek_summary
+from models.scraper import qwant_knowledge, mojeekk_kalid_summary_id
 from models.mysql import db as mysql
 import hashlib
 import requests
@@ -185,12 +185,13 @@ def search():
 
 # Backend API starts here
 
-@app.route("/api/summary", methods=["POST", "GET"])
+@app.route("/api/k-summary", methods=["POST", "GET"])
 def api_summary():
-    query = request.args.get("q", "") # users input
-    data = mojeek_summary(query=query)
-
-    return {"text": data.replace('"' ,'')}
+    q = request.args.get("q")
+    if q:
+        return jsonify(mojeekk_kalid_summary_id(query=q))
+    else:
+        return jsonify({"error": "Missing parameters"}), 404
 
 
 @app.route("/api/knowledge", methods=["POST", "GET"])
@@ -199,7 +200,9 @@ def api_knowledge():
     data = qwant_knowledge(query=query)
     data = data if isinstance(data, dict) else {}
     return data
-    
+
+
+@app.route("/api/serper", methods=["POST", "GET"])
 
 @app.route("/api/serper", methods=["POST", "GET"])
 def api_serper_search():

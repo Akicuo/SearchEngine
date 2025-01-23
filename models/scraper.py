@@ -167,7 +167,38 @@ def mojeek_summary(query:str):
         words = text.replace("</span>", "")
         return words
     # Usage
-
+def mojeekk_kalid_summary_id(query: str):
+        query = query.replace(' ', '+')
+        url = f"https://www.mojeek.com/search?q={query}&mal=1"
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True, channel="chrome")
+                context = browser.new_context(user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 OPR/115.0.0.0")
+                page = context.new_page()
+                page.goto(url=url)
+                url_parts = page.url.split("=")
+                if len(url_parts) != 4:
+                    return {"error": "no results found", "url": page.url, "count": len(url_parts)}
+                else:
+                    id = url_parts[-1]
+                    return {"id": id, "link": f"https://www.mojeek.com/llm/streamResponse?kalid={id}&q={query}"}
+        except Exception as e:
+            return {"error": str(e)}
+        
+def kalid_summary_id(self, query: str):
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True, channel="chrome")
+                context = browser.new_context(user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 OPR/115.0.0.0")
+                page = context.new_page()
+                page.goto(f"https://www.mojeek.com/search?q={query.replace(' ', '+')}&mal=1")
+                url_parts = page.url.split("=")
+                if len(url_parts) != 4:
+                    return {"error": "no results found", "url": page.url, "count": len(url_parts)}
+                else:
+                    return url_parts[-1]
+        except Exception as e:
+            return {"error": str(e)}
 
 
     
