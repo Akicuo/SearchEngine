@@ -51,7 +51,6 @@
     <div class="searchNav">
         <form id="searchForm">
             <input type="text" class="search-input" id="searchInput" value="{{ query }}">
-            <button type="submit" class="search-button" id="searchButton" data-lang-key="search" >Search</button>
             <div class="searchTypes mobile-only">
                 <a class="WebSearchCatag active" href="/search?cat=discover" data-lang-key="SearchTypeAll">
                     Discover    
@@ -192,13 +191,6 @@
         </div>
 
     </main>
-
-    <div class="results">
-        
-    </div>
-    
-    
-    
     
     <script src="/static/scripts/search.js"></script>
     <script src="/static/scripts/serper.js"></script>
@@ -208,19 +200,13 @@
     <link rel="stylesheet" href="/static/styles/main.css">
     <link rel="stylesheet" href="/static/styles/header.css">
     <link rel="stylesheet" href="/static/styles/search.css">
+    <link rel="stylesheet" href="/static/styles/rspsn.css">
     <script>
         document.querySelector('.hamburger').addEventListener('click', function() {
             this.classList.toggle('active');
             document.querySelector('.nav-links').classList.toggle('active');
         });
     </script>
-    {% if session.get('message') %}
-    <div id="popupMessage" class="popup-message">
-        <div class="popup-content">
-            <span class="popup-close">&times;</span>
-            <p>{{ session['message'] }}</p>
-        </div>
-    </div>
-    {% endif %}
+
 </body>
 </html>
