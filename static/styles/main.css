@@ -287,12 +287,12 @@ input:checked + .slider:before {
 }
 
 .WebSearchCatag {
-    display: flex;
-    margin: 5px;
+    display: inline-flex;
+    margin: 20px;
     border: 1px red solid;
     padding: 10px;
     border-radius: 15px;
-    max-height: 50px ;
+    height: 40px ;
 }
 
 a {
@@ -306,20 +306,19 @@ a {
 
 .searchTypes {
     
-    display: flex;
+    display: block;
+    position: absolute;
+    flex-direction: row;
     margin-left: auto;
     margin-right: 40px;
-    top: 20px;
     gap: 8px;
     padding: 8px;
-    background: rgba(30, 30, 30, 0.9);
-    border-radius: 8px;
+    max-height: 80px;
+    width: 100%;
 }
 
 .searchTypes a {
     padding: 8px 12px;
-    border-radius: 8px;
-    background: rgba(255, 51, 51, 0.1);
     transition: all 0.2s ease;
     white-space: nowrap;
 }
@@ -334,8 +333,6 @@ a {
         position: static;
         margin: 10px 0;
         padding: 10px;
-        background: rgba(26, 26, 26, 0.98);
-        backdrop-filter: blur(10px);
         justify-content: center;
         overflow-x: auto;
         z-index: 1;
@@ -353,6 +350,7 @@ a {
 .searchResults {
     display: flex;
     margin: 20px;
+    margin-top: 80px;
     row-gap: 5px;
     flex-wrap: wrap;
 }
@@ -364,13 +362,16 @@ a {
 #col {
     display: flex;
     flex-direction: column;
-    flex-wrap: nowrap;
+    height: fit-content;
 }
 #col.desktop-only.knowledge-graph-card {
     display: block;
+    min-width: none;
+    margin: 20px;
+    width: 70%;
 }
 #col.desktop-only.summary-card {
-    display: block;
+    display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
@@ -506,8 +507,8 @@ a h5 {
 }
 @media (max-width: 768px) {
     .searchTypes {
-        position: static;
-        display: flex;
+        position: relative;
+        display: block;
         flex-direction: row;
         overflow-x: auto;
         white-space: nowrap;
@@ -572,9 +573,22 @@ a h5 {
 .flexible-row {
     display: flex;
     flex-direction: row;
+    flex-wrap: nowrap;
 }
 @media (max-width: 768px) {
     .flexible-row {
         flex-direction: column;
+
+        flex-wrap: wrap;
+    }
+    .reverse-flexible-row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
     }
 }
+.reverse-flexible-row {
+    display: flex;
+    flex-direction: row;
+}
+

@@ -21,7 +21,6 @@ import requests
 import json
 import regex as re
 import uuid
-from openai import OpenAI
 
 
 
@@ -42,7 +41,6 @@ with open("config.json", "r") as f:
     print("Config loaded from file")
     print(config)
 
-NOVITA_API_KEY = config["NOVITA_API_KEY"]
 SERPER_DEV_API_KEY = config["SERPER_DEV_API_KEY"]
 
 mysql = mysql(host=config["DB_HOST_URL"], user=config["DB_USER"], password=config["DB_PASSWORD"], database="d041e_seai")
@@ -62,6 +60,13 @@ app.secret_key = app.secret_key = os.urandom(16)
 def get_random_uuid() -> str:
     return str(uuid.uuid4())
 
+
+
+@app.route("/logout_fg", methods=["GET", "POST"])
+def forgot_password():
+    global default_pfp
+    session["liu"] = None
+    return render_template("index.html", session=session)
 
 @app.errorhandler(404)
 def handle_not_found(e):

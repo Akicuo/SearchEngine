@@ -4,7 +4,8 @@ async function fetchStreamedResponse() {
     const data = await response.json();
     const url = data.link;
     console.log(url);
-    const contentDiv = document.querySelector('#summaryContent'); 
+    const contentDivD = document.querySelector('#summaryContentDesktop'); 
+    const contentDivM = document.querySelector('#summaryContentMobile'); 
 
     try {
         const response = await fetch(url);
@@ -30,9 +31,11 @@ async function fetchStreamedResponse() {
                             buffer += jsonData.choices[0].delta.content;
 
                             // Update the content div with the buffer
-                            if(contentDiv) {
-                                contentDiv.textContent = buffer;
-                                contentDiv.scrollTop = contentDiv.scrollHeight;
+                            if (contentDivM && contentDivD) {
+                                contentDivM.textContent = buffer;
+                                contentDivM.scrollTop = contentDivM.scrollHeight;
+                                contentDivD.textContent = buffer;
+                                contentDivD.scrollTop = contentDivD.scrollHeight;
                             }
                         }
                     }

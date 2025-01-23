@@ -1,17 +1,16 @@
-.knowledge-graph-card.mobile-only{
+.mobile-only.col{
     display: none;
 }
 @media (max-width: 768px) {
-    .knowledge-graph-card.mobile-only{
+    .mobile-only.col{
         display: flex;
     }
 }
-
-.knowledge-graph-card.desktop-only{
+.desktop-only.col{
     display: flex;
 }
 @media (max-width: 768px) {
-    .knowledge-graph-card.desktop-only{
+    .desktop-only.col{
         display: none;
     }
 }
