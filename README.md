@@ -14,7 +14,7 @@ Stellen Sie sicher, dass Python und Git auf Ihrem System installiert sind. Falls
 Klonen Sie das GitHub-Repository auf Ihren lokalen Rechner:
 
 ```bash
-git clone https://github.com/ihr-repository-link.git
+git clone https://github.com/Akicuo/SearchEngine.git
 ```
 
 ## Virtuelle Umgebung einrichten
