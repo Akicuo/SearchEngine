@@ -52,7 +52,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function displayResults(data) {
         searchResults.innerHTML = '';
-
+        if (data.news) {
+            searchResults.classList.remove('image-results');
+            searchResults.classList.add('fdc');
+    
+            data.news.forEach(item => {
+                const container = document.createElement('div');
+                container.classList.add('news-item');
+    
+                const image = document.createElement('img');
+                image.src = item.imageUrl;
+                image.alt = 'News Image';
+    
+                const content = document.createElement('div');
+                const title = document.createElement('h2');
+                const link = document.createElement('a');
+                link.href = item.link;
+                link.textContent = item.title;
+    
+                const description = document.createElement('p');
+                description.textContent = item.snippet;
+    
+                const meta = document.createElement('div');
+                meta.classList.add('meta');
+                meta.innerHTML = `<span>${item.date}</span> • <span>${item.source}</span>`;
+    
+                title.appendChild(link);
+                content.appendChild(title);
+                content.appendChild(description);
+                content.appendChild(meta);
+    
+                container.appendChild(image);
+                container.appendChild(content);
+                searchResults.appendChild(container);
+            });
+        }
         if (data.organic) {
             document.querySelector('.searchResults').classList.toggle('image-results', false);
             document.querySelector('.searchResults').classList.toggle('fdc', true);
