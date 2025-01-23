@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/static/styles/search.css">
     <link rel="stylesheet" href="/static/styles/news.css">
     <link rel="stylesheet" href="/static/styles/videos.css">
+    <link rel="stylesheet" href="/static/styles/images.css">
 </head>
 <body>
     <!-- Header -->
@@ -90,7 +91,7 @@
                             <div class="knowledge-graph-card">
                                 <div class="row">
                                     <div class="col">
-                                        <h3>{{ knowledge.data.result.title }}</h3>
+                                        <h3 style="color: red;">{{ knowledge.data.result.title }}</h3>
                                         <p>{{ knowledge.data.result.description }}</p>
                                         <a class="knowledgeReadMoreHyperlink" href="{{ knowledge.data.result.url }}">Read more</a>
                                     </div>
@@ -183,7 +184,7 @@
                         <div class="knowledge-graph-card">
                             <div class="row">
                                 <div class="col">
-                                    <h3>{{ knowledge.data.result.title }}</h3>
+                                    <h3 style="color: red;">{{ knowledge.data.result.title }}</h3>
                                     <p>{{ knowledge.data.result.description }}</p>
                                     <a class="knowledgeReadMoreHyperlink" href="{{ knowledge.data.result.url }}">Read more</a>
                                 </div>

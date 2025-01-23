@@ -104,9 +104,7 @@
     }
 }
 
-.search-container {
-    margin-bottom: 5px;
-}
+
 .searchResults {
     max-width: 80%;
 }
@@ -132,12 +130,11 @@
     position: relative;
     display: flex;
     flex-direction: row;
+    margin-bottom: 5px;
+    height: fit-content;
 }
 
-.search-container {
-    position: relative;
-    width: 100%;
-}
+
 
 .search-input {
     width: 100%;

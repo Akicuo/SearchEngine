@@ -8,6 +8,7 @@ body {
     background-color: #121212;
     font-family: 'Arial', sans-serif;
     color: #ffffff;
+    margin: 0px;
 }
 
 .header {
@@ -110,7 +111,6 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 70px);
     text-align: center;
     padding: 20px;
 }

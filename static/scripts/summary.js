@@ -1,3 +1,16 @@
+function cleanString(input) {
+    // Remove links enclosed in < and >
+    let cleanedString = input.replace(/<https?:\/\/[^\s>]+>/g, '');
+
+    // Remove [citation:X] patterns
+    cleanedString = cleanedString.replace(/\[citation:\d+\]/g, '');
+
+    // Remove any extra spaces left after removal
+    cleanedString = cleanedString.replace(/\s+/g, ' ').trim();
+
+    return cleanedString;
+}
+
 async function fetchStreamedResponse() {
     const query = document.getElementById('searchInput').value.trim();
     const response = await fetch(`/api/k-summary?q=${encodeURIComponent(query)}`);
@@ -29,6 +42,7 @@ async function fetchStreamedResponse() {
                         if (jsonData.choices && jsonData.choices[0].delta.content) {
                             // Append the content to the buffer
                             buffer += jsonData.choices[0].delta.content;
+                            buffer = cleanString(buffer)
 
                             // Update the content div with the buffer
                             if (contentDivM && contentDivD) {
