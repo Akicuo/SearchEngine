@@ -208,13 +208,13 @@ def api_knowledge():
 
 @app.route("/api/serper", methods=["POST", "GET"])
 def api_serper_search():
-    cat = request.args.get("cat", "discover").lower()
+    cat = request.args.get("cat").lower()
     query = request.args.get("q")
-    if  "images" == cat :
+    if  cat in ["bilder", "images"]:
         return jsonify(serper.search_images(query=query))
-    elif "news" == cat:
+    elif cat in ["news", "nachrichten"]:
         return jsonify(serper.search_news(query=query))
-    elif  cat.lower() in ["discover", "all", "alles"]:
+    elif  cat in ["discover", "all", "alles"]:
         return jsonify(serper.search_discover(query=query))
     elif "videos" == cat:
         return jsonify(serper.search_videos(query=query))

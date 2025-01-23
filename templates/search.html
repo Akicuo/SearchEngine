@@ -10,13 +10,9 @@
     <link rel="stylesheet" href="/static/styles/header.css">
     <link rel="stylesheet" href="/static/styles/rspsn.css">
     <link rel="stylesheet" href="/static/styles/search.css">
+    <link rel="stylesheet" href="/static/styles/news.css">
 </head>
 <body>
-    <p id="QueryParagraph" style="display: none;">{{ query }}</p>
-    <div style="display: none;">
-        <p id="llm"> {{ llm }}</p>
-        <p id="searchOffset"> {{ search_offset }}</p>
-    </div>
     <!-- Header -->
     <header class="header">
         <a href="#" class="logo">Seai 2.0</a>
@@ -67,8 +63,8 @@
         <div id="resultHolder" class="col">
             <div class="flexible-row">
                 <div class="searchTypes">
-                    <a class="WebSearchCatag active" href="/search?cat=discover" data-lang-key="SearchTypeAll">
-                        Discover 
+                    <a class="WebSearchCatag active" href="/search?cat=all" data-lang-key="SearchTypeAll">
+                        all 
                     </a>
                     <a class="WebSearchCatag" href="/search?cat=images" data-lang-key="SearchTypeImages">
                         Images 
@@ -104,16 +100,9 @@
                     </div>
 
                 <div class="searchResults row" id="searchResults">
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
-                    <a href="#" class="searchResult" >
-                        <h3 class="searchResultTitle" >Just a placeholder</h3>
-                        <h5 class="searchResultLink" >www.placeholder.result</h5>
-                        <p class="searchResultContent" >This site does not contain any content!</p>
-                    </a>
+ 
+                        
+
                     <a href="#" class="searchResult" >
                         <h3 class="searchResultTitle" >Just a placeholder</h3>
                         <h5 class="searchResultLink" >www.placeholder.result</h5>
@@ -181,6 +170,7 @@
                         <p class="searchResultContent" >This site does not contain any content!</p>
                     </a>
                 </div>
+
                     
 
 

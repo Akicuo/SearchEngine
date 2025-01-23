@@ -48,7 +48,8 @@ class Serper:
             return json.loads(response.text)
         except requests.exceptions.RequestException as e:
             return {"error": str(e)}
-    def search_news(self, query, num_results=10):
+
+    def search_videos(self, query, num_results=10):
         url = f"{self.base_url}/videos"
         try:
             payload = json.dumps({
@@ -59,5 +60,3 @@ class Serper:
             return json.loads(response.text)
         except requests.exceptions.RequestException as e:
             return {"error": str(e)}
-  
-                    

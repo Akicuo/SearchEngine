@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return; 
         }
 
-
         const url = `/api/serper?q=${encodeURIComponent(query)}${category ? `&cat=${encodeURIComponent(category)}` : ''}`;
+        console.log(url);
 
         const resultsContainer = document.getElementById('searchResults');
         if (resultsContainer) {
@@ -52,44 +52,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function displayResults(data) {
         searchResults.innerHTML = '';
-        if (data.news) {
+        
+        if (data.news && Array.isArray(data.news)) {
             searchResults.classList.remove('image-results');
-            searchResults.classList.add('fdc');
-    
+
             data.news.forEach(item => {
                 const container = document.createElement('div');
                 container.classList.add('news-item');
-    
+
                 const image = document.createElement('img');
-                image.src = item.imageUrl;
+                image.src = item.imageUrl || 'https://via.placeholder.com/150'; // Fallback image
                 image.alt = 'News Image';
-    
+
                 const content = document.createElement('div');
                 const title = document.createElement('h2');
                 const link = document.createElement('a');
                 link.href = item.link;
                 link.textContent = item.title;
-    
+
                 const description = document.createElement('p');
                 description.textContent = item.snippet;
-    
+
                 const meta = document.createElement('div');
                 meta.classList.add('meta');
                 meta.innerHTML = `<span>${item.date}</span> • <span>${item.source}</span>`;
-    
+
                 title.appendChild(link);
                 content.appendChild(title);
                 content.appendChild(description);
                 content.appendChild(meta);
-    
+
                 container.appendChild(image);
                 container.appendChild(content);
+
                 searchResults.appendChild(container);
             });
         }
-        if (data.organic) {
-            document.querySelector('.searchResults').classList.toggle('image-results', false);
-            document.querySelector('.searchResults').classList.toggle('fdc', true);
+
+        else if (data.organic && Array.isArray(data.organic)) {
+            searchResults.classList.toggle('image-results', false);
+            searchResults.classList.toggle('fdc', true);
             data.organic.forEach(item => {
                 const result = document.createElement('a');
                 result.className = "searchResult";
@@ -117,10 +119,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 result.appendChild(snippet);
                 searchResults.appendChild(result);
             });
-        } else if (data.images) {
-            document.querySelector('.searchResults').classList.toggle('fdc', false);
+        } else if (data.images && Array.isArray(data.images)) {
+            searchResults.classList.toggle('fdc', false);
             data.images.forEach(item => {
-                document.querySelector('.searchResults').classList.toggle('image-results', true);
+                searchResults.classList.toggle('image-results', true);
                 const result = document.createElement('img');
                 result.src = item.imageUrl;
                 result.alt = item.title || 'Image';
@@ -133,25 +135,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    fetchSearchResults(category = 'discover');
+    fetchSearchResults('discover');
 
     // Category selection
     document.querySelectorAll('.WebSearchCatag').forEach(function(element) {
         element.addEventListener('click', function(event) {
             event.preventDefault();
 
-            // Update active state for clicked category
             document.querySelectorAll('.WebSearchCatag').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
 
-            // Fetch results with selected category
-            const selectedCategory = event.target.textContent.trim();
+            // Fetch results with selected category from href
+            const href = event.target.getAttribute('href');
+            const urlParams = new URLSearchParams(href.split('?')[1]);
+            const selectedCategory = urlParams.get('cat') || 'discover';
             fetchSearchResults(selectedCategory);
         });
     });
-
 });
 
 // Debounce helper function
