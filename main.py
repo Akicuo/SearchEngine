@@ -216,7 +216,7 @@ def api_serper_search():
         return jsonify(serper.search_news(query=query))
     elif  cat in ["discover", "all", "alles"]:
         return jsonify(serper.search_discover(query=query))
-    elif "videos" == cat:
+    elif cat in ["videos"]:
         return jsonify(serper.search_videos(query=query))
     else:
         return jsonify({"error": "Invalid category"}), 400

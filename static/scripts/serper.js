@@ -119,7 +119,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 result.appendChild(snippet);
                 searchResults.appendChild(result);
             });
-        } else if (data.images && Array.isArray(data.images)) {
+        }
+
+        else if (data.images && Array.isArray(data.images)) {
             searchResults.classList.toggle('fdc', false);
             data.images.forEach(item => {
                 searchResults.classList.toggle('image-results', true);
@@ -129,7 +131,49 @@ document.addEventListener('DOMContentLoaded', function() {
                 result.className = "ImgResult";
                 searchResults.appendChild(result);
             });
-        } else if (!data.organic || data.organic.length === 0) {
+        }
+
+        // New block for handling video items
+        else if (data.videos && Array.isArray(data.videos)) {
+            searchResults.classList.remove('image-results');
+            searchResults.classList.remove('fdc');
+
+            data.videos.forEach(item => {
+                const container = document.createElement('div');
+                container.classList.add('video-item');
+
+                // Add thumbnail if available
+                if (item.imageUrl) {
+                    const image = document.createElement('img');
+                    image.src = item.imageUrl;
+                    image.alt = 'Video Thumbnail';
+                    container.appendChild(image);
+                }
+
+                const content = document.createElement('div');
+                const title = document.createElement('h2');
+                const link = document.createElement('a');
+                link.href = item.link;
+                link.textContent = item.title;
+
+                const description = document.createElement('p');
+                description.textContent = item.snippet;
+
+                const meta = document.createElement('div');
+                meta.classList.add('meta');
+                meta.innerHTML = `<span>${item.channel || item.source}</span> • <span>${item.date}</span> • <span class="duration">${item.duration}</span>`;
+
+                title.appendChild(link);
+                content.appendChild(title);
+                content.appendChild(description);
+                content.appendChild(meta);
+
+                container.appendChild(content);
+                searchResults.appendChild(container);
+            });
+        }
+
+        else if (!data.organic || data.organic.length === 0) {
             searchResults.innerHTML = '<p>No results found for your search.</p>';
             return;
         }
