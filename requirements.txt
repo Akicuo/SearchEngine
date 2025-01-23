@@ -1,7 +1,5 @@
-requests
 flask
 mysql-connector-python
-openai>=1.0.0
 python-dotenv
 regex
 bs4
