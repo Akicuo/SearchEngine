@@ -5,12 +5,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (popup) {
         closeBtn.addEventListener('click', function() {
             popup.style.display = 'none';
+            fetch("/remove-session-message", { method: "POST" })
         });
 
         // Optional: Close popup when clicking outside
         popup.addEventListener('click', function(event) {
             if (event.target === popup) {
                 popup.style.display = 'none';
+                
             }
         });
     }

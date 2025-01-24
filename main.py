@@ -219,8 +219,12 @@ def api_serper_search():
         return jsonify(serper.search_videos(query=query))
     else:
         return jsonify({"error": "Invalid category"}), 400
-
-        
+    
+    
+@app.route("/remove-session-message", methods=["POST"])
+def remove_session_message():
+    if "message" in session:
+        session.pop("message")
 
 
 if __name__ == "__main__":
