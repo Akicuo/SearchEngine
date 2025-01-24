@@ -13,7 +13,7 @@ def search_duckduckgo(query: str,
     start = time.time()
     with sync_playwright() as p:
         # Launch browser in headless mode
-        browser = p.chromium.launch(headless=True, executable_path=r"C:\Program Files\Google\Chrome\Application\chrome.exe")
+        browser = p.chromium.launch(headless=True, channel="chrome")
         context = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 OPR/115.0.0.0"
         )
@@ -121,7 +121,7 @@ def search_duckduckgo(query: str,
 def qwant_knowledge(query: str):
     with sync_playwright() as p:
 
-        browser = p.chromium.launch(headless=True, executable_path=r"C:\Program Files\Google\Chrome\Application\chrome.exe")
+        browser = p.chromium.launch(headless=True, channel="chrome")
         context = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 OPR/115.0.0.0"
         )
@@ -149,7 +149,7 @@ def mojeek_summary(query:str):
     url = f"https://www.mojeek.com/search?q={query}&mal=1"
     with sync_playwright() as p:
         # Launch browser in headless mode
-        browser = p.chromium.launch(headless=False, executable_path=r"C:\Program Files\Google\Chrome\Application\chrome.exe")
+        browser = p.chromium.launch(headless=False, channel="chrome")
         context = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 OPR/115.0.0.0"
         )
