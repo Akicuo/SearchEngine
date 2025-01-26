@@ -226,7 +226,7 @@
     </style>
 </head>
 <body>
-    <!-- Header with Hamburger -->
+
     <header class="header">
         <nav class="nav-container">
             <a href="#" class="nav-brand">Seai 2.0</a>
@@ -251,12 +251,13 @@
         </nav>
     </header>
 
-    <!-- Search Section -->
+
     <div class="search-container">
         <div class="main-logo">Seai 2.0</div>
         <div class="search-box">
-            <input type="search" class="search-input" placeholder="Search the web...">
-            
+            <form id="searchForm">
+                <input type="search" id="searchInput" class="search-input" placeholder="Search the web...">
+            </form>
             <div class="filter-badge">Showing results from: <span id="filterList">All sites</span></div>
             
             <div class="filter-container">
