@@ -40,12 +40,8 @@ except Exception as e:
 
 serper = Serper(SERPER_DEV_API_KEY)
 app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.secret_key = app.secret_key = os.urandom(16)
-
-
-
-def get_random_uuid() -> str:
-    return str(uuid.uuid4())
 
 
 
@@ -55,15 +51,9 @@ def forgot_password():
     session["liu"] = None
     return render_template("index.html", session=session)
 
-@app.errorhandler(404)
-def handle_not_found(e):
-    return {"error": "PageNotFound"}
-
 @app.route("/", methods=["GET", "POST"])
 def index():
-    global default_pfp
-    session["liu"] = None
-    return render_template("index.html", session=session)
+    return render_template("index.html")
 
 
 @app.route("/auth", methods=["GET", "POST"])
@@ -196,6 +186,5 @@ def remove_session_message():
     if "message" in session:
         session.pop("message")
 
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=False, port=5000)
+    app.run(host="0.0.0.0", debug=True, port=5000)
