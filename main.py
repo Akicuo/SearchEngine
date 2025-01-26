@@ -1,25 +1,13 @@
-from flask import (
-    Flask,
-    render_template,
-    request,
-    redirect,
-    url_for,
-    jsonify,
-    session,
-    flash,
-    Response,
-    stream_with_context
-)
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session, flash, Response, stream_with_context
 import json, time
 from datetime import datetime
 from models.serper import Serper
 import os
-from models.scraper import qwant_knowledge, mojeekk_kalid_summary_id
 from models.mysql import DB as db_model
 import hashlib
 import json
-import regex as re
 import uuid
+import requests
 
 
 
@@ -52,12 +40,8 @@ except Exception as e:
 
 serper = Serper(SERPER_DEV_API_KEY)
 app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.secret_key = app.secret_key = os.urandom(16)
-
-
-
-def get_random_uuid() -> str:
-    return str(uuid.uuid4())
 
 
 
@@ -67,15 +51,9 @@ def forgot_password():
     session["liu"] = None
     return render_template("index.html", session=session)
 
-@app.errorhandler(404)
-def handle_not_found(e):
-    return render_template("PageNotFound.html"), 404
-
 @app.route("/", methods=["GET", "POST"])
 def index():
-    global default_pfp
-    session["liu"] = None
-    return render_template("index.html", session=session)
+    return render_template("index.html")
 
 
 @app.route("/auth", methods=["GET", "POST"])
@@ -178,32 +156,13 @@ def profile():
 @app.route("/search", methods=["GET"])
 def search():
     global key, SYSTEM_PROMPT, USER_PROMPT
-    query = request.args.get("q") # users input
+    query = request.args.get("q")
+    cat = request.args.get("cat")
     
     return render_template(
         "search.html", 
-        query=query,
-        knowledge=qwant_knowledge(query=query)
+        query=query
     )
-
-
-# Backend API starts here
-
-@app.route("/api/k-summary", methods=["POST", "GET"])
-def api_summary():
-    q = request.args.get("q")
-    if q:
-        return jsonify(mojeekk_kalid_summary_id(query=q))
-    else:
-        return jsonify({"error": "Missing parameters"}), 404
-
-
-@app.route("/api/knowledge", methods=["POST", "GET"])
-def api_knowledge():
-    query = request.args.get("q", "") # users input
-    data = qwant_knowledge(query=query)
-    data = data if isinstance(data, dict) else {}
-    return data
 
 @app.route("/api/serper", methods=["POST", "GET"])
 def api_serper_search():
@@ -214,18 +173,18 @@ def api_serper_search():
     elif cat in ["news", "nachrichten"]:
         return jsonify(serper.search_news(query=query))
     elif  cat in ["discover", "all", "alles"]:
-        return jsonify(serper.search_discover(query=query))
+        # return jsonify(requests.get(f"https://unsung.cc/api/v1/se-search?q={query}").json())
+        return serper.search_discover(query=query)
     elif cat in ["videos"]:
         return jsonify(serper.search_videos(query=query))
     else:
         return jsonify({"error": "Invalid category"}), 400
     
-    
+
 @app.route("/remove-session-message", methods=["POST"])
 def remove_session_message():
     if "message" in session:
         session.pop("message")
 
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=False, port=5000)
+    app.run(host="0.0.0.0", debug=True, port=5000)

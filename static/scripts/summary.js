@@ -13,7 +13,7 @@ function cleanString(input) {
 
 async function fetchStreamedResponse() {
     const query = document.getElementById('searchInput').value.trim();
-    const response = await fetch(`/api/k-summary?q=${encodeURIComponent(query)}`);
+    const response = await fetch(`https://unsung.cc/api/v1/se-summary?q=${encodeURIComponent(query)}`);
     const data = await response.json();
     const url = data.link;
     console.log(url);
