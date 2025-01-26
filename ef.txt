@@ -1,0 +1,20 @@
+<div class="auth-links">
+                {% if session.get('user') %}
+                    <a href="{{ url_for('logout') }}" data-lang-key="logout">Logout</a>
+                {% else %}
+                    <a href="/auth?skipTo=login" data-lang-key="login">Login</a>
+                    <a href="/auth?skipTo=register" data-lang-key="register">Register</a>
+                {% endif %}
+            </div>
+
+
+
+
+{% if session.get('message') %}
+        <div id="popupMessage" class="popup-message">
+            <div class="popup-content">
+                <span class="popup-close">&times;</span>
+                <p>{{ session['message'] }}</p>
+            </div>
+        </div>
+        {% endif %}
